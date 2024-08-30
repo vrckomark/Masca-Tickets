@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 // Ticket Schema
 const TicketSchema = new Schema({
+  wallet: { type: String, required: true },
   vcId: { type: String, required: true },
   used: { type: Boolean, default: false },
   eventID: { type: Schema.Types.ObjectId, ref: 'Event', required: true }
@@ -19,8 +20,9 @@ const EventSchema = new Schema({
 
 // Vendor Schema
 const VendorSchema = new Schema({
-  wallet: { type: String, required: true },
   companyName: { type: String, required: true },
+  wallet: { type: String, required: true },
+  did: { type: String, required: true },
   events: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
 });
 
