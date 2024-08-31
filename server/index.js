@@ -3,7 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const { Vendor, Event, Ticket } = require("./src/models");
+const { Vendor, Event, Ticket } = require("./models/models");
 
 const app = express();
 
@@ -12,19 +12,13 @@ app.use(express.json());
 
 const port = process.env.PORT || 3000;
 
-app.get("/health-check", (req, res) => {
-  res.json({ status: 200, message: "Client-Server communication successful" });
-});
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    dbName: "masca",
+  })
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
-
-mongoose.connect(process.env.MONGODB_URI, {
-  dbName: 'masca'
-})
-.then(() => console.log("MongoDB connected..."))
-.catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("MongoDB connected..."))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 /* POST */
 
@@ -39,14 +33,14 @@ app.post("/vendor", async (req, res) => {
   }
 });
 
-app.post('/event', async (req, res) => {
+app.post("/event", async (req, res) => {
   try {
-    const { name, description, availableTickets, vendorID } = req.body;
+    const { name, description, availableTickets, vendorId } = req.body;
 
     // Preveri, če vendor obstaja
-    const vendor = await Vendor.findById(vendorID);
+    const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(404).json({ message: 'Vendor not found' });
+      return res.status(404).json({ message: "Vendor not found" });
     }
 
     // Ustvari nov event
@@ -54,8 +48,8 @@ app.post('/event', async (req, res) => {
       name,
       description,
       availableTickets,
-      vendorID
-    });EVNE
+      vendorId,
+    });
 
     // Shrani event v bazo
     const savedEvent = await newEvent.save();
@@ -70,21 +64,21 @@ app.post('/event', async (req, res) => {
   }
 });
 
-app.post('/ticket', async (req, res) => {
+app.post("/ticket", async (req, res) => {
   try {
-    const { wallet, qrCode, eventID } = req.body;
+    const { wallet, qrCode, eventId } = req.body;
 
     // Preveri, če event obstaja
-    const event = await Event.findById(eventID);
+    const event = await Event.findById(eventId);
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: "Event not found" });
     }
 
     // Ustvari nov ticket
     const newTicket = new Ticket({
       wallet,
       qrCode,
-      eventID,
+      eventId,
     });
 
     // Shrani ticket v bazo
@@ -102,7 +96,11 @@ app.post('/ticket', async (req, res) => {
 
 /* GET */
 
-app.get('/vendors', async (req, res) => {
+app.get("/health-check", (req, res) => {
+  res.json({ status: 200, message: "Client-Server communication successful" });
+});
+
+app.get("/vendors", async (req, res) => {
   try {
     const vendors = await Vendor.find();
     res.json(vendors);
@@ -111,7 +109,7 @@ app.get('/vendors', async (req, res) => {
   }
 });
 
-app.get('/vendor/:id', async (req, res) => {
+app.get("/vendor/:id", async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.params.id);
     res.json(vendor);
@@ -120,38 +118,48 @@ app.get('/vendor/:id', async (req, res) => {
   }
 });
 
-app.get('/vendor/:id/events', async (req, res) => {
+app.get("/vendor/:id/events", async (req, res) => {
   try {
-    const vendor = await Vendor.findById(req.params.id).populate('events');
+    const vendor = await Vendor.findById(req.params.id).populate("events");
     res.json(vendor.events);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
-app.get('/events', async (req, res) => {
+app.get("/events", async (req, res) => {
   try {
-    const events = await Event.find().populate('vendorID', 'companyName wallet');
+    const events = await Event.find().populate(
+      "vendorId",
+      "companyName wallet"
+    );
     res.json(events);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
-app.get('/event/:id', async (req, res) => {
+app.get("/event/:id", async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id).populate('vendorID', 'companyName wallet');
+    const event = await Event.findById(req.params.id).populate(
+      "vendorId",
+      "companyName wallet"
+    );
     res.json(event);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
-app.get('/event/:id/tickets', async (req, res) => {
+app.get("/event/:id/tickets", async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id).populate('tickets');
+    const event = await Event.findById(req.params.id).populate("tickets");
     res.json(event.tickets);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
