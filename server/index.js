@@ -23,11 +23,17 @@ mongoose
 /* POST */
 
 app.post("/vendor", async (req, res) => {
+  const vendors = await Vendor.find();
+  if (vendors.some((vendor) => vendor.wallet === req.body.wallet))
+    return res
+      .status(409)
+      .json({ message: "Vendor with this wallet already exists" });
+
   try {
     const newVendor = new Vendor(req.body);
     const savedVendor = await newVendor.save();
-    console.log("savedVendor");
-    res.status(201).json(savedVendor);
+    console.log("saved Vendor", JSON.stringify(req.body));
+    res.status(201).json({ data: savedVendor, message: "Success" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
