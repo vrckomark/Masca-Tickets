@@ -1,5 +1,5 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useMasca } from "../MascaProvider";
+import { useMasca } from "../hooks/useMasca";
 
 const Vendor = () => {
   const { currentDID, currentDIDMethod } = useMasca();

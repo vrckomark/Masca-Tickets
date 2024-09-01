@@ -1,13 +1,25 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { enableMasca, isError } from '@blockchain-lab-um/masca-connector';
-import { useAccount } from 'wagmi';
+import React, { createContext, useEffect, useState } from "react";
+import {
+  enableMasca,
+  isError,
+  MascaApi,
+} from "@blockchain-lab-um/masca-connector";
+import { useAccount } from "wagmi";
 
-const MascaContext = createContext<any>(null);
+export const MascaContext = createContext<{
+  mascaApi: MascaApi | null;
+  currentDID: string | null;
+  currentDIDMethod: string | null;
+}>({
+  mascaApi: null,
+  currentDID: null,
+  currentDIDMethod: null,
+});
 
-export const useMasca = () => useContext(MascaContext);
-
-export const MascaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [mascaApi, setMascaApi] = useState<any>(null);
+const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [mascaApi, setMascaApi] = useState<MascaApi | null>(null);
   const [currentDID, setCurrentDID] = useState<string | null>(null);
   const [currentDIDMethod, setCurrentDIDMethod] = useState<string | null>(null);
   const { address, isConnected } = useAccount();
@@ -16,16 +28,16 @@ export const MascaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (isConnected && address) {
       const initializeMasca = async () => {
         const enableResult = await enableMasca(address, {
-          snapId: 'npm:@blockchain-lab-um/masca',
-          version: '1.2.2',
+          snapId: "npm:@blockchain-lab-um/masca",
+          version: "1.2.2",
         });
 
         if (isError(enableResult)) {
-          console.error('Failed to enable Masca:', enableResult.error);
+          console.error("Failed to enable Masca:", enableResult.error);
           return;
         }
 
-        const api = await enableResult.data.getMascaApi();
+        const api = enableResult.data.getMascaApi();
         setMascaApi(api);
 
         const did = await api.getDID();
@@ -53,3 +65,5 @@ export const MascaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     </MascaContext.Provider>
   );
 };
+
+export default MascaProvider;

@@ -1,9 +1,9 @@
+import { createConfig, http } from "wagmi";
+import { mainnet } from "wagmi/chains";
 
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { mainnet } from 'wagmi/chains';
-
-export const config = getDefaultConfig({
-  appName: 'Masca Tickets',
-  projectId: 'YOUR_PROJECT_ID',
+export const wagmiConfig = createConfig({
   chains: [mainnet],
+  transports: {
+    [mainnet.id]: http(),
+  },
 });

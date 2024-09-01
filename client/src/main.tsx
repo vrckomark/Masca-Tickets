@@ -5,19 +5,19 @@ import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import App from "./App";
-import { config } from "./wagmi";
-import { MascaProvider } from "./MascaProvider";
+import { wagmiConfig } from "./wagmi";
 
 import "@rainbow-me/rainbowkit/styles.css";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
+import MascaProvider from "./contexts/MascaProvider";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <StrictMode>
-      <WagmiProvider config={config}>
+      <WagmiProvider config={wagmiConfig}>
         <MascaProvider>
           <QueryClientProvider client={queryClient}>
             <RainbowKitProvider theme={darkTheme()}>
