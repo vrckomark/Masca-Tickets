@@ -4,6 +4,7 @@ import Vendor from "./pages/Vendor";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import SignUp from "./pages/SignUp";
+import CreateEvent from "./pages/CreateEvent";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/user" element={<User />} />
         <Route path="/vendor" element={<Vendor />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </div>

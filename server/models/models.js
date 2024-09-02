@@ -13,6 +13,8 @@ const TicketSchema = new Schema({
 const EventSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
+  dateTime: { type: Date, required: true },
+  location: { type: String, required: true },
   availableTickets: { type: Number, required: true },
   vendorId: { type: Schema.Types.ObjectId, ref: "Vendor", required: true },
   tickets: [{ type: Schema.Types.ObjectId, ref: "Ticket" }],

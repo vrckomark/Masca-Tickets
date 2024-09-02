@@ -12,11 +12,13 @@ export const MascaContext = createContext<{
   currentDID: string | null;
   currentDIDMethod: string | null;
   isVendor: boolean | undefined;
+  vendorId: string | null;
 }>({
   mascaApi: null,
   currentDID: null,
   currentDIDMethod: null,
   isVendor: undefined,
+  vendorId: null,
 });
 
 const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -27,6 +29,7 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentDIDMethod, setCurrentDIDMethod] = useState<string | null>(null);
   const { address, isConnected } = useAccount();
   const [isVendor, setIsVendor] = useState<boolean | undefined>(undefined);
+  const [vendorId, setVendorId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isConnected && address) {
@@ -64,7 +67,9 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const checkVendorStatus = async () => {
       if (isConnected && address) {
-        setIsVendor(await getVendorStatus(address));
+        const vendorStatus = await getVendorStatus(address);
+        setIsVendor(vendorStatus.isVendor !== null);
+        setVendorId(vendorStatus.id || null);
       }
     };
 
@@ -73,7 +78,7 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <MascaContext.Provider
-      value={{ mascaApi, currentDID, currentDIDMethod, isVendor }}
+      value={{ mascaApi, currentDID, currentDIDMethod, isVendor, vendorId }}
     >
       {children}
     </MascaContext.Provider>

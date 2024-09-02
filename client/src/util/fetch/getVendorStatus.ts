@@ -7,6 +7,6 @@ export const getVendorStatus = async (wallet: Address) => {
       "Content-Type": "application/json",
     },
   });
-  const isVendor = await response.json();
-  return isVendor;
+  const vendorStatus = await response.json();
+  return vendorStatus;
 };

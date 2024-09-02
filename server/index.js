@@ -41,7 +41,14 @@ app.post("/vendor", async (req, res) => {
 
 app.post("/event", async (req, res) => {
   try {
-    const { name, description, availableTickets, vendorId } = req.body;
+    const {
+      name,
+      description,
+      dateTime,
+      location,
+      availableTickets,
+      vendorId,
+    } = req.body;
 
     // Preveri, če vendor obstaja
     const vendor = await Vendor.findById(vendorId);
@@ -53,8 +60,10 @@ app.post("/event", async (req, res) => {
     const newEvent = new Event({
       name,
       description,
+      dateTime: new Date(dateTime),
+      location,
       availableTickets,
-      vendorId,
+      vendorId: new mongoose.Types.ObjectId(vendorId),
     });
 
     // Shrani event v bazo
@@ -63,6 +72,7 @@ app.post("/event", async (req, res) => {
     // Dodaj referenco na event v vendor dokumentu
     vendor.events.push(savedEvent._id);
     await vendor.save();
+    console.log("Event added: ", JSON.stringify(req.body));
 
     res.status(201).json(savedEvent);
   } catch (err) {
@@ -119,8 +129,8 @@ app.get("/vendors", async (req, res) => {
 app.get("/vendor/:wallet", async (req, res) => {
   try {
     const vendor = await Vendor.findOne({ wallet: req.params.wallet });
-    if (vendor) return res.json(true);
-    res.json(false);
+    if (vendor) return res.json({ id: vendor._id, isVendor: true });
+    res.json({ id: null, isVendor: false });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

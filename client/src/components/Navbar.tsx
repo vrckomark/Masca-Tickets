@@ -21,7 +21,15 @@ const Navbar = () => {
         )}
       </div>
 
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-6 items-center">
+        {isVendor && isConnected && (
+          <Link
+            to="/create-event"
+            className="px-4 py-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
+          >
+            + New Event
+          </Link>
+        )}
         {!isSignUpPage && <ConnectButton />}
         {!isSignUpPage && !isConnected && (
           <Link
