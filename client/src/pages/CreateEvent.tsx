@@ -41,8 +41,7 @@ const CreateEvent = () => {
     const date = dateTimeToDate(dateTime);
 
     if (!eventName || !location || !totalTickets || !vendorId) return;
-    console.log("here");
-    await createEvent(
+    const response = await createEvent(
       eventName,
       description,
       date,
@@ -50,6 +49,9 @@ const CreateEvent = () => {
       totalTickets,
       vendorId
     );
+    if (!response.isError) {
+      window.location.href = "/";
+    }
   };
 
   const onEventNameChange = (e: React.FormEvent<HTMLInputElement>) => {

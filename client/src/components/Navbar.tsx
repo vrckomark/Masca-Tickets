@@ -30,7 +30,14 @@ const Navbar = () => {
             + New Event
           </Link>
         )}
+        <Link
+          to="/tickets"
+          className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
+        >
+          Your tickets
+        </Link>
         {!isSignUpPage && <ConnectButton />}
+
         {!isSignUpPage && !isConnected && (
           <Link
             to="/signup"

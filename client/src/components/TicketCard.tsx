@@ -6,6 +6,8 @@ interface TicketCardProps {
 }
 
 const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
+  // const [isExpanded, setIsExpanded] = useState(false) // TODO: Implement expandable ticket card
+
   const dummyTicket = {
     id: "0x1234567890abcdef",
     vendor: "Stuk",
