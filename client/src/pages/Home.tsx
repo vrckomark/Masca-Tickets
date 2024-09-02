@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMasca } from "../hooks/useMasca";
+import TicketCard from "../components/TicketCard";
 
 const Home = () => {
   const { mascaApi } = useMasca();
@@ -21,8 +22,6 @@ const Home = () => {
     getCredentials();
   }, [mascaApi]);
 
-  console.log(credentials);
-
   return (
     <div className="p-8 text-xl">
       {isLoading ? (
@@ -32,7 +31,7 @@ const Home = () => {
       ) : credentials && credentials.length ? (
         <div className="text-wrap">
           {credentials.map((vc) => (
-            <div>{JSON.stringify(vc)}</div>
+            <TicketCard vc={vc} />
           ))}
         </div>
       ) : (

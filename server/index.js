@@ -115,6 +115,17 @@ app.get("/vendors", async (req, res) => {
   }
 });
 
+// Vrne ali je poslani PA vendor ali ne
+app.get("/vendor/:wallet", async (req, res) => {
+  try {
+    const vendor = await Vendor.findOne({ wallet: req.params.wallet });
+    if (vendor) return res.json(true);
+    res.json(false);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 app.get("/vendor/:id", async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.params.id);

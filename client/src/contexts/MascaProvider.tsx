@@ -5,15 +5,18 @@ import {
   MascaApi,
 } from "@blockchain-lab-um/masca-connector";
 import { useAccount } from "wagmi";
+import { getVendorStatus } from "../util/fetch/getVendorStatus";
 
 export const MascaContext = createContext<{
   mascaApi: MascaApi | null;
   currentDID: string | null;
   currentDIDMethod: string | null;
+  isVendor: boolean | undefined;
 }>({
   mascaApi: null,
   currentDID: null,
   currentDIDMethod: null,
+  isVendor: undefined,
 });
 
 const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -23,6 +26,7 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentDID, setCurrentDID] = useState<string | null>(null);
   const [currentDIDMethod, setCurrentDIDMethod] = useState<string | null>(null);
   const { address, isConnected } = useAccount();
+  const [isVendor, setIsVendor] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     if (isConnected && address) {
@@ -57,10 +61,20 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
 
       initializeMasca();
     }
+
+    const checkVendorStatus = async () => {
+      if (isConnected && address) {
+        setIsVendor(await getVendorStatus(address));
+      }
+    };
+
+    checkVendorStatus();
   }, [isConnected, address]);
 
   return (
-    <MascaContext.Provider value={{ mascaApi, currentDID, currentDIDMethod }}>
+    <MascaContext.Provider
+      value={{ mascaApi, currentDID, currentDIDMethod, isVendor }}
+    >
       {children}
     </MascaContext.Provider>
   );
