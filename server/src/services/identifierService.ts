@@ -1,4 +1,3 @@
-// src/services/identifierService.ts
 import { agent } from '../plugins/veramoAgent';
 
 export const createIdentifier = async (alias: string) => {

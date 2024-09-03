@@ -1,4 +1,3 @@
-// src/routes/identifierRoutes.ts
 import { Router } from 'express';
 import { createIdentifierHandler } from '../controllers/identifierController';
 

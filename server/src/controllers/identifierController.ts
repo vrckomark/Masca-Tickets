@@ -1,4 +1,3 @@
-// src/controllers/identifierController.ts
 import { Request, Response } from 'express';
 import { createIdentifier } from '../services/identifierService';
 
