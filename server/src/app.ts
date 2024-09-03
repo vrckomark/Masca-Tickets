@@ -1,16 +1,13 @@
-// src/app.ts
 import express from 'express';
-import identifierRoutes from './routes/identifierRoutes';
-import credentialRoutes from './routes/credentialRoutes';
-import verifyRoutes from './routes/verifyRoutes';
+import cors from 'cors';
+import apiRoutes from './routes';
 
 const app = express();
 
+app.use(cors());
 
 app.use(express.json());
 
-app.use('/api', identifierRoutes);
-app.use('/api', credentialRoutes);
-app.use('/api', verifyRoutes);
+app.use('/api', apiRoutes);
 
 export default app;

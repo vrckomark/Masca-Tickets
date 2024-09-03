@@ -24,21 +24,10 @@ import {
     DataStore,
     DataStoreORM,
   } from '@veramo/data-store';
-  import { DataSource } from 'typeorm';
   import dotenv from 'dotenv';
+  import { dbConnection } from '../db/config';
 
   dotenv.config();
-  
-  // Povezava na Supabase PostgreSQL bazo podatkov
-  const dbConnection = new DataSource({
-    type: 'postgres',
-    url: process.env.POSTGRESSQL_URL,
-    synchronize: true,  // Samodejno ustvari in posodobi tabele
-    migrations,
-    migrationsRun: true,
-    logging: ['error', 'info', 'warn'],
-    entities: Entities,
-  }).initialize();
   
   export const agent = createAgent<
     IDIDManager & IKeyManager & IDataStore & IDataStoreORM & IResolver & ICredentialPlugin
