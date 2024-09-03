@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Vendor, Event, Ticket } from './types/types';
+import { Vendor, Event, Ticket } from './types';
 import { Entities, migrations } from '@veramo/data-store';
 import dotenv from 'dotenv';
 

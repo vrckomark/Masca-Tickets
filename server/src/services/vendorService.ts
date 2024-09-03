@@ -1,5 +1,5 @@
 import { agent } from '../plugins/veramoAgent';
-import { Vendor } from '../db/types/types';
+import { Vendor } from '../db/types';
 
 export const createVendor = async (companyName: string, wallet: string) => {
   try {
