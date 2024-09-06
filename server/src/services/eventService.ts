@@ -40,3 +40,15 @@ export const getAllEvents = async () => {
     throw new Error('Error fetching events: ' + error.message);
   }
 };
+
+export const getEventsByVendor = async (vendorWallet: string) => {
+  try {
+    const events = await Event.find({
+      where: { vendor: { wallet: vendorWallet } },
+      relations: ['vendor'],
+    });
+    return events;
+  } catch (error) {
+    throw new Error('Error fetching events: ' + error.message);
+  }
+};
