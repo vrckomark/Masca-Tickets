@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEvent } from '../services/eventService';
+import { createEvent, getAllEvents } from '../services/eventService';
 
 export const createEventHandler = async (req: Request, res: Response) => {
   try {
@@ -10,5 +10,14 @@ export const createEventHandler = async (req: Request, res: Response) => {
     res.status(201).json({ event });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const getAllEventsHandler = async (req: Request, res: Response) => {
+  try {
+    const events = await getAllEvents();
+    return res.status(200).json(events);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };

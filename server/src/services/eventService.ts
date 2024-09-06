@@ -31,3 +31,12 @@ export const createEvent = async (
     throw new Error('Error creating event: ' + error.message);
   }
 };
+
+export const getAllEvents = async () => {
+  try {
+    const events = await Event.find({ relations: ['vendor'] });
+    return events;
+  } catch (error) {
+    throw new Error('Error fetching events: ' + error.message);
+  }
+};
