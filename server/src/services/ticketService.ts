@@ -50,3 +50,29 @@ export const createTicket = async (eventId: string, wallet: string, alias: strin
     throw new Error('Error creating ticket: ' + error.message);
   }
 };
+
+export const getTicketsByWallet = async (wallet: string) => {
+  try {
+    const tickets = await Ticket.find({
+      where: { wallet },
+      relations: ['event'],
+    });
+
+    return tickets;
+  } catch (error) {
+    throw new Error('Error fetching tickets: ' + error.message);
+  }
+};
+
+export const getActiveTicketsByWallet = async (wallet: string) => {
+  try {
+    const tickets = await Ticket.find({
+      where: { wallet, isUsed: false },
+      relations: ['event'],
+    });
+
+    return tickets;
+  } catch (error) {
+    throw new Error('Error fetching tickets: ' + error.message);
+  }
+};
