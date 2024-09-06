@@ -10,6 +10,14 @@ export const createTicket = async (eventId: string, wallet: string, alias: strin
       throw new Error('Event not found');
     }
 
+    if (event.availableTickets <= 0) {
+      throw new Error('No available tickets for this event');
+    }
+
+    event.availableTickets -= 1;
+
+    await event.save();
+
     const ticket = Ticket.create({
       wallet: wallet,
       isUsed: false,
