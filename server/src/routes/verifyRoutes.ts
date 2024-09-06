@@ -1,8 +1,8 @@
 import express from 'express';
-import { verifyCredentialHandler } from '../controllers/verifyController';
+import { verifyTicketHandler } from '../controllers/verifyController';
 
 const router = express.Router();
 
-router.post('/verify-credential', verifyCredentialHandler);
+router.post('/verify-credential', verifyTicketHandler);
 
 export default router;

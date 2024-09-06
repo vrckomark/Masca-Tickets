@@ -20,7 +20,6 @@ export const createTicket = async (eventId: string, wallet: string, alias: strin
 
     // Create VC
     const identifier = await agent.didManagerGetByAlias({ alias });
-    console.log('Identifier details: ', identifier);
 
     if (!identifier) {
       throw new Error(`Identifier with alias ${alias} not found`);

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { verifyCredential } from '../services/verifyService';
+import { verifyTicket } from '../services/verifyService';
 
-export const verifyCredentialHandler = async (req: Request, res: Response) => {
+export const verifyTicketHandler = async (req: Request, res: Response) => {
   try {
     const { credential } = req.body;
 
@@ -9,12 +9,9 @@ export const verifyCredentialHandler = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Credential is required' });
     }
 
-    const result = await verifyCredential(credential);
+    const result = await verifyTicket(credential);
 
-    return res.status(200).json({
-      verified: result.verified,
-      jwt: result.jwt
-    });
+    return res.status(200).json({result});
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

@@ -3,6 +3,6 @@ import { createEventHandler } from '../controllers/eventController';
 
 const router = Router();
 
-router.post('/events', createEventHandler);
+router.post('/event', createEventHandler);
 
 export default router;
