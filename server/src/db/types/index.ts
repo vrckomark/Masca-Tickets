@@ -59,9 +59,6 @@ export class Ticket extends BaseEntity {
   @Column('varchar', { length: 255 })
   wallet!: string;
 
-  @Column('text')
-  jwkProof!: string;
-
   @Column('boolean', { default: false })
   isUsed!: boolean;
 

@@ -34,11 +34,8 @@
     "ethr-did-resolver": "^7.0.2",
     "express": "^4.19.2",
     "key-did-resolver": "^4.0.0",
-    "mongodb": "^6.8.0",
-    "mongoose": "^8.6.0",
     "pg": "^8.12.0",
     "reflect-metadata": "^0.2.2",
-    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20",
     "web-did-resolver": "^2.0.21"
   },
