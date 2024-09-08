@@ -16,9 +16,11 @@ const Navbar = () => {
         <Link to="/" className="font-bold text-3xl text-sky-400 p-4">
           Masca Events
         </Link>
-        {isVendor && (
-          <p className="font-mediun text-xl text-sky-300 italic">vendors</p>
-        )}
+        <Link to="/vendor">
+          {isVendor && (
+            <p className="font-mediun text-xl text-sky-300 italic">vendors</p>
+          )}
+        </Link>
       </div>
 
       <div className="flex gap-6 items-center">
@@ -31,7 +33,7 @@ const Navbar = () => {
           </Link>
         )}
         <Link
-          to="/user/tickets"
+          to="/tickets"
           className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
         >
           Your tickets
