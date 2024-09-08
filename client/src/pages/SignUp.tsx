@@ -1,13 +1,11 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import React, { FormEvent, useState } from "react";
 import { useAccount } from "wagmi";
-import { useMasca } from "../hooks/useMasca";
 import { addVendor } from "../util/fetch/addVendor";
 
 const SignUp = () => {
   const [companyName, setCompanyName] = useState<string>("");
   const { isConnected, address } = useAccount();
-  const { currentDID } = useMasca();
   const [status, setStatus] = useState<{
     message: string;
     status: number;
@@ -16,8 +14,8 @@ const SignUp = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!companyName || !isConnected || !currentDID || !address) return;
-    const status = await addVendor(companyName, address, currentDID);
+    if (!companyName || !isConnected || !address) return;
+    const status = await addVendor(companyName, address);
     setStatus(status);
   };
 
@@ -58,7 +56,7 @@ const SignUp = () => {
               status?.isError ? "bg-red-500" : "bg-green-500"
             }`}
           >
-            <h2 className="text-3xl font-bold">
+            <h2 className="text-2xl font-bold">
               {status.isError ? status.status : status.message}
             </h2>
             {status.isError && <p>{status.message}</p>}

@@ -1,27 +1,69 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useMasca } from "../hooks/useMasca";
+import { useEffect, useState } from "react";
+import { getEventsByVendor } from "../util/fetch/getEventsByVendor";
+import TextBox from "../components/TextBox";
+import { useAccount } from "wagmi";
 
 const Vendor = () => {
-  const { currentDID, currentDIDMethod } = useMasca();
+
+  const [events, setEvents] = useState<object[]>([]);
+  const { address } = useAccount();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const data = await getEventsByVendor(address);
+      setEvents(
+        data.map((event: any) => {
+          return {
+            ...event,
+            date: isNaN(event.date) ? null : event.date,
+          };
+        })
+      );
+    };
+    fetchEvents();
+  }, []);
 
   return (
-    <>
-      <h1 className="text-3xl font-bold border-2 rounded-xl p-4">
-        Vendor Page
-      </h1>
-      <div style={{ display: "flex", justifyContent: "flex-end", padding: 12 }}>
-        <ConnectButton />
+    <div className="p-8 text-xl flex flex-col gap-12">
+      <div className="flex flex-wrap gap-8">
+        {events.length &&
+          events.map((event: any, i: number) => (
+            <div
+              className="flex flex-col p-4 gap-2 rounded-lg bg-white bg-opacity-5 w-max"
+              key={i}
+            >
+              <div className="flex gap-6 items-center">
+                <h2>{event.name}</h2>
+                <TextBox
+                  label={`Tickets left ${event.availableTickets}`}
+                  customStyle="font-medium py-2"
+                />
+              </div>
+              <pre
+                style={{ fontFamily: "Inter Tight , system-ui" }}
+                className="text-lg opacity-60 mt-6 "
+              >
+                {event.description}
+              </pre>
+              {event.date && (
+                <div className="flex gap-4 mt-4">
+                  <TextBox label={event.date.toDateString()} />
+                  <TextBox
+                    label={`${event.date.getHours()}:${
+                      event.date.getMinutes() == 0
+                        ? "00"
+                        : event.date.getMinutes()
+                    }`}
+                  />
+                </div>
+              )}
+              {event.location && (
+                <TextBox label={event.location} customStyle="mt-4" />
+              )}
+            </div>
+          ))}
       </div>
-      <div>
-        <p>
-          <strong>Current DID:</strong> {currentDID || "Not connected"}
-        </p>
-        <p>
-          <strong>Current DID Method:</strong>{" "}
-          {currentDIDMethod || "Not connected"}
-        </p>
-      </div>
-    </>
+    </div>
   );
 };
 
