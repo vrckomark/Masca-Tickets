@@ -9,13 +9,13 @@ import { wagmiConfig } from "./wagmi";
 
 import "@rainbow-me/rainbowkit/styles.css";
 import "./index.css";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import MascaProvider from "./contexts/MascaProvider";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
+  <Router>
     <StrictMode>
       <WagmiProvider config={wagmiConfig}>
         <MascaProvider>
@@ -27,5 +27,5 @@ createRoot(document.getElementById("root")!).render(
         </MascaProvider>
       </WagmiProvider>
     </StrictMode>
-  </BrowserRouter>
+  </Router>
 );
