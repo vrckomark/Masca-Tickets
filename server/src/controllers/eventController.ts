@@ -24,13 +24,13 @@ export const getAllEventsHandler = async (req: Request, res: Response) => {
 
 export const getEventsByVendorHandler = async (req: Request, res: Response) => {
   try {
-    const { wallet } = req.body;
+    const { vendorWallet } = req.params;
 
-    if (!wallet) {
+    if (!vendorWallet) {
       return res.status(400).json({ error: 'Vendor wallet is required' });
     }
 
-    const events = await getEventsByVendor(wallet);
+    const events = await getEventsByVendor(vendorWallet);
     return res.status(200).json(events);
   } catch (error) {
     return res.status(500).json({ error: error.message });
