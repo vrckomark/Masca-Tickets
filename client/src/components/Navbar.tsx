@@ -24,14 +24,14 @@ const Navbar = () => {
       <div className="flex gap-6 items-center">
         {isVendor && isConnected && (
           <Link
-            to="/create-event"
+            to="/vendor/create-event"
             className="px-4 py-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
           >
             + New Event
           </Link>
         )}
         <Link
-          to="/tickets"
+          to="/user/tickets"
           className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
         >
           Your tickets
@@ -40,7 +40,7 @@ const Navbar = () => {
 
         {!isSignUpPage && !isConnected && (
           <Link
-            to="/signup"
+            to="/vendor/signup"
             className="p-4 rounded-full font-semibold text-sky-400 bg-white bg-opacity-0 hover:bg-opacity-15 transition-all"
           >
             Sign Up as Vendor

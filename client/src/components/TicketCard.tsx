@@ -19,7 +19,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
   };
 
   return (
-    <div className="flex gap-4 bg-white bg-opacity-10 rounded-lg p-6 w-max">
+    <div className="flex gap-4 bg-white bg-opacity-10 rounded-lg p-6 w-max my-8">
       <div className="flex flex-col gap-4">
         <h2 className="font-medium text-2xl text-sky-400 mb-4">Stuk rave</h2>
 
