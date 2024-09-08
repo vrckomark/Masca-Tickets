@@ -15,12 +15,10 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* User */}
         <Route path="/user" element={<UserLayout />}>
           <Route index element={<User />} />
           <Route path="tickets" element={<UserTickets />} />
         </Route>
-        {/* Vendor */}
         <Route path="/vendor" element={<VendorLayout />}>
           <Route index element={<Vendor />} />
           <Route path="signup" element={<SignUp />} />

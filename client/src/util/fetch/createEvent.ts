@@ -4,10 +4,10 @@ export const createEvent = async (
   dateTime: Date,
   location: string,
   totalTickets: number,
-  vendorId: string
+  wallet: string
 ) => {
   try {
-    const res = await fetch("http://localhost:3000/event", {
+    const res = await fetch("http://localhost:3000/api/event", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,7 +18,7 @@ export const createEvent = async (
         dateTime,
         location,
         availableTickets: totalTickets,
-        vendorId,
+        wallet,
       }),
     });
     return {
