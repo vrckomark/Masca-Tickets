@@ -15,10 +15,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/user" element={<UserLayout />}>
-          <Route index element={<User />} />
-          <Route path="tickets" element={<UserTickets />} />
-        </Route>
+        <Route path="/tickets" element={<UserTickets />} />
         <Route path="/vendor" element={<VendorLayout />}>
           <Route index element={<Vendor />} />
           <Route path="signup" element={<SignUp />} />
