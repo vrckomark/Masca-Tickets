@@ -1,8 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useMasca } from "../hooks/useMasca";
 
 const Vendor = () => {
-  const { currentDID, currentDIDMethod } = useMasca();
 
   return (
     <>
@@ -11,15 +9,6 @@ const Vendor = () => {
       </h1>
       <div style={{ display: "flex", justifyContent: "flex-end", padding: 12 }}>
         <ConnectButton />
-      </div>
-      <div>
-        <p>
-          <strong>Current DID:</strong> {currentDID || "Not connected"}
-        </p>
-        <p>
-          <strong>Current DID Method:</strong>{" "}
-          {currentDIDMethod || "Not connected"}
-        </p>
       </div>
     </>
   );
