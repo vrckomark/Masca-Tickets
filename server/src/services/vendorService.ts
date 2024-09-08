@@ -13,3 +13,12 @@ export const createVendor = async (companyName: string, wallet: string) => {
     throw new Error('Error creating vendor: ' + error.message);
   }
 };
+
+export const findVendorByWallet = async (wallet: string) => {
+  try {
+    const vendor = await Vendor.findOne({ where: { wallet } });
+    return vendor;
+  } catch (error) {
+    throw new Error('Error finding vendor: ' + error.message);
+  }
+};
