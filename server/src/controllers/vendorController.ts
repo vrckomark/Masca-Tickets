@@ -19,9 +19,9 @@ export const createVendorHandler = async (req: Request, res: Response) => {
 
 export const getVendorHandler = async (req: Request, res: Response) => {
   try {
-    const { vendorWallet } = req.params;
+    const { wallet } = req.params;
 
-    const vendor = await findVendorByWallet(vendorWallet);
+    const vendor = await findVendorByWallet(wallet);
 
     if (vendor) {
       return res.status(200).json({ exists: true });

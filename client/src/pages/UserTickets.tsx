@@ -1,43 +1,94 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMasca } from "../hooks/useMasca";
 import TicketCard from "../components/TicketCard";
+import { CircularProgress } from "@mui/material";
+import { getTicketsByWallet } from "../util/fetch/getTicketsByWallet";
+import { useAccount } from "wagmi";
 
 const UserTickets = () => {
   const { mascaApi } = useMasca();
-  const [credentials, setCredentials] = useState<object[] | null>(null);
+  const { address } = useAccount();
+  const [VCs, setVCs] = useState<object[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [tickets, setTickets] = useState([]);
 
   useEffect(() => {
-    if (!mascaApi || (credentials && credentials.length)) return;
-    const getCredentials = async () => {
+    const fetchTicketsFromDB = async () => {
+      if (!address) return;
+      try {
+        const dbTickets = await getTicketsByWallet(address);
+        setTickets(dbTickets);
+      } catch (error) {
+        console.error("Error fetching tickets from the database:", error);
+      }
+    };
+
+    const fetchVCs = async () => {
+      if (!mascaApi) return;
       setIsLoading(true);
-      const credentials = await mascaApi.queryCredentials({
-        options: { returnStore: true },
-      });
-      if (credentials.success) {
-        setCredentials(credentials.data);
+      try {
+        const credentials = await mascaApi.queryCredentials();
+
+        console.log("credentials:", credentials);
+
+        if (credentials.success) {
+          setVCs(credentials.data);
+        } else {
+          console.error("Failed to query VCs:", credentials);
+        }
+      } catch (error) {
+        console.error("Error querying credentials:", error);
+      } finally {
         setIsLoading(false);
       }
     };
-    getCredentials();
+
+    if (address) {
+      fetchTicketsFromDB();
+      fetchVCs();
+    }
   }, [mascaApi]);
+
+  const filteredVCs = VCs?.filter((vc) => {
+    const { credentialSubject } = vc.data;
+    return tickets.some((ticket) => ticket.ticketId === credentialSubject?.ticketID);
+  });
+
+  const usedVCs = filteredVCs?.filter((vc) => {
+    const { credentialSubject } = vc.data;
+    const relatedTicket = tickets.find((ticket) => ticket.ticketId === credentialSubject?.ticketID);
+    return relatedTicket?.isUsed === true;
+  });
+
+  const unusedVCs = filteredVCs?.filter((vc) => {
+    const { credentialSubject } = vc.data;
+    const relatedTicket = tickets.find((ticket) => ticket.ticketId === credentialSubject?.ticketID);
+    return relatedTicket?.isUsed === false;
+  });
+
 
   return (
     <div className="p-8 text-xl">
       {isLoading ? (
-        <p>loading...</p>
-      ) : credentials && !credentials.length ? (
+        <CircularProgress size={20} color="inherit" />
+      ) : !VCs?.length ? (
         <p>No credentials found.</p>
-      ) : credentials && credentials.length ? (
-        <div className="text-wrap">
-          {credentials.map((vc) => (
-            <TicketCard vc={vc} />
-          ))}
-        </div>
       ) : (
-        <p className="text-xl">
-          Connect wallet and accept to view your credentials.
-        </p>
+        <>
+          <h2 className="mb-4 text-2xl font-semibold">Unused Tickets</h2>
+          <div className="text-wrap">
+            {unusedVCs?.map((vc, index) => (
+              <TicketCard key={index} vc={vc} />
+            ))}
+          </div>
+
+          <h2 className="mb-4 mt-8 text-2xl font-semibold">Used Tickets</h2>
+          <div className="text-wrap">
+            {usedVCs?.map((vc, index) => (
+              <TicketCard key={index} vc={vc} />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

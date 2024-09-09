@@ -1,15 +1,56 @@
 import { useEffect, useState } from "react";
-import Searchbar from "../components/Searchbar";
 import { getEvents } from "../util/fetch/getEvents";
 import TextBox from "../components/TextBox";
+import { useAccount } from "wagmi";
+import { useMasca } from "../hooks/useMasca";
+import { createTicket } from "../util/fetch/createTicket";
+import { CircularProgress } from "@mui/material";
 
 const Home = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [events, setEvents] = useState<object[]>([]);
+  const { mascaApi, currentDID } = useMasca();
+  const { address } = useAccount();
+  const [loading, setLoading] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const onSearchTermChange = (search: string) => {
-    setSearchTerm(search);
-  };
+  const handleBuyTicket = async (eventId: string, alias: string) => {
+    if (!mascaApi || !currentDID) {
+      alert("Unable to buy ticket. Please ensure you're connected to our DAPP.");
+      return;
+    }
+  
+    try {
+      setLoading(eventId);
+  
+      console.log("Buying ticket for event:", eventId);
+      const response = await createTicket(eventId, address, alias, currentDID);
+  
+      console.log("Ticket purchase response:", response);
+      
+      if (response.status === 201 && response.verifiableCredential) {
+        // Save the VC to MetaMask Snap Masca
+        const saveResult = await mascaApi.saveCredential(
+          response.verifiableCredential,
+          {
+            store: ["ceramic", "snap"],
+          }
+        );
+  
+        if (saveResult) {
+          console.log("Ticket purchased and saved to Masca!");
+          setSuccessMessage("Ticket successfully purchased and saved to Masca!");
+          setTimeout(() => setSuccessMessage(null), 3000);
+        }
+      } else {
+        throw new Error(`Failed to purchase ticket: ${response.message}`);
+      }
+    } catch (error) {
+      console.error("Error buying ticket:", error);
+      alert("Failed to purchase ticket.");
+    } finally {
+      setLoading(null);
+    }
+  };  
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -28,8 +69,6 @@ const Home = () => {
 
   return (
     <div className="p-8 text-xl flex flex-col gap-12">
-      <Searchbar onDebouncedChange={onSearchTermChange} />
-
       <div className="flex flex-wrap gap-8">
         {events.length &&
           events.map((event: any, i: number) => (
@@ -65,10 +104,29 @@ const Home = () => {
               {event.location && (
                 <TextBox label={event.location} customStyle="mt-4" />
               )}
+              <button
+                onClick={() => handleBuyTicket(event.id, event.vendor.wallet)}
+                className="bg-sky-500 hover:bg-sky-400  text-white px-4 py-2 mt-4 rounded-lg button-hover"
+                value={event.id}
+                name="eventId"
+              >
+                {loading === event.id ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  "Buy Ticket"
+                )}
+              </button>
             </div>
           ))}
       </div>
+      {/* Success Popup */}
+      {successMessage && (
+        <div className="fixed left-1/2 top-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+          {successMessage}
+        </div>
+      )}
     </div>
+    
   );
 };
 

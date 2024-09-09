@@ -1,7 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import UserLayout from "./layouts/UserLayout";
-import VendorLayout from "./layouts/VendorLayout";
-import User from "./pages/User";
 import Vendor from "./pages/Vendor";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
@@ -15,15 +12,10 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/user" element={<UserLayout />}>
-          <Route index element={<User />} />
-          <Route path="tickets" element={<UserTickets />} />
-        </Route>
-        <Route path="/vendor" element={<VendorLayout />}>
-          <Route index element={<Vendor />} />
-          <Route path="signup" element={<SignUp />} />
-          <Route path="create-event" element={<CreateEvent />} />
-        </Route>
+        <Route path="/tickets" element={<UserTickets />} />
+        <Route path="/vendor" element={<Vendor />} />
+        <Route path="/vendor/signup" element={<SignUp />} />
+        <Route path="/vendor/create-event" element={<CreateEvent />} />
       </Routes>
     </div>
   );

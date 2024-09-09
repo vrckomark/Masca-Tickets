@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from "react";
 import { createEvent } from "../util/fetch/createEvent";
 import { useMasca } from "../hooks/useMasca";
+import { useAccount } from "wagmi";
 
 export type DateTime = {
   day: number;
@@ -23,7 +24,9 @@ const CreateEvent = () => {
     hour: now.getHours(),
     minute: now.getMinutes(),
   });
-  const { vendorId, isVendor } = useMasca();
+  const { isVendor } = useMasca();
+  const { address } = useAccount();
+
   if (!isVendor) return <p>Unauthorized</p>;
 
   const dateTimeToDate = (dateTime: DateTime) => {
@@ -40,17 +43,18 @@ const CreateEvent = () => {
     e.preventDefault();
     const date = dateTimeToDate(dateTime);
 
-    if (!eventName || !location || !totalTickets || !vendorId) return;
+    if (!eventName || !location || !totalTickets || !address) return;
     const response = await createEvent(
       eventName,
       description,
       date,
       location,
       totalTickets,
-      vendorId
+      address
     );
+    console.log(response);
     if (!response.isError) {
-      window.location.href = "/";
+      window.location.href = "/vendor";
     }
   };
 
@@ -72,7 +76,8 @@ const CreateEvent = () => {
   };
 
   const onTotalTicketsChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setTotalTickets(parseInt(e.currentTarget.value));
+    const value = e.currentTarget.value;
+    setTotalTickets(value ? parseInt(value) : 0);
   };
 
   const onDescriptionChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
@@ -81,7 +86,7 @@ const CreateEvent = () => {
 
   return (
     <div className="p-12 flex flex-col w-full items-center gap-8">
-      <h1 className="font-semibold text-3xl mb-8">Create a new event.</h1>
+      <h1 className="font-semibold text-3xl mb-8">Create a new event</h1>
       <form onSubmit={handleSubmit} className="flex-col flex w-1/3 gap-8">
         <input
           className="text-white transition-all hover:bg-opacity-10 focus:bg-opacity-10 outline-none  border-opacity-0   font-medium bg-white bg-opacity-[0.07] w-full p-4 rounded-lg text-xl"

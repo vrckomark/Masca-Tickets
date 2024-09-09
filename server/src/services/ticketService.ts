@@ -39,8 +39,11 @@ export const createTicket = async (eventId: string, wallet: string, alias: strin
         credentialSubject: {
           id: did,
           ticketID: ticket.id,
+          eventName: event.name,
+          eventLocation: event.location,
+          eventDate: event.dateTime,  
         },
-        type: ['TicketVerifiableCredential'],
+        type: [event.name],
       },
       proofFormat: 'jwt',
     });
