@@ -1,14 +1,41 @@
 import { useEffect, useState } from "react";
-import Searchbar from "../components/Searchbar";
 import { getEvents } from "../util/fetch/getEvents";
 import TextBox from "../components/TextBox";
+import { useAccount } from "wagmi";
+import { useMasca } from "../hooks/useMasca";
+import { createTicket } from "../util/fetch/createTicket";
 
 const Home = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [events, setEvents] = useState<object[]>([]);
+  const { mascaApi, currentDID } = useMasca();
+  const { address } = useAccount();
 
-  const onSearchTermChange = (search: string) => {
-    setSearchTerm(search);
+  const handleBuyTicket = async (eventId: string, alias: string) => {
+    if (!mascaApi || !currentDID) {
+      alert("Unable to buy ticket. Please ensure you're connected to Masca.");
+      return;
+    }
+
+    try {
+      console.log("Buying ticket for event:", eventId);
+      const response = await createTicket(eventId, alias, address, currentDID);
+
+      console.log("Ticket purchase response:", response);
+      if (response.verifiableCredential) {
+        // Save the VC to MetaMask Snap Masca
+        const saveResult = await mascaApi.saveCredential(response.verifiableCredential, {
+          store: ['ceramic', 'snap'],
+        });
+
+        if (saveResult) {
+          console.log("Ticket purchased and saved to Masca!");
+          alert("Ticket purchased and saved to Masca!");
+        }
+      }
+    } catch (error) {
+      console.error("Error buying ticket:", error);
+      alert("Failed to purchase ticket.");
+    }
   };
 
   useEffect(() => {
@@ -28,8 +55,6 @@ const Home = () => {
 
   return (
     <div className="p-8 text-xl flex flex-col gap-12">
-      <Searchbar onDebouncedChange={onSearchTermChange} />
-
       <div className="flex flex-wrap gap-8">
         {events.length &&
           events.map((event: any, i: number) => (
@@ -65,6 +90,14 @@ const Home = () => {
               {event.location && (
                 <TextBox label={event.location} customStyle="mt-4" />
               )}
+              <button
+                onClick={() => handleBuyTicket(event.id, event.vendor.wallet)}
+                className="bg-sky-500 hover:bg-sky-400  text-white px-4 py-2 mt-4 rounded-lg button-hover"
+                value={event.id}
+                name="eventId"
+              >
+                Buy Ticket
+              </button>
             </div>
           ))}
       </div>

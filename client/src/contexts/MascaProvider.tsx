@@ -9,9 +9,11 @@ import { getVendorStatus } from "../util/fetch/getVendorStatus";
 
 export const MascaContext = createContext<{
   mascaApi: MascaApi | null;
+  currentDID: string | null;
   isVendor: boolean | undefined;
 }>({
   mascaApi: null,
+  currentDID: null,
   isVendor: undefined,
 });
 
@@ -19,8 +21,12 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [mascaApi, setMascaApi] = useState<MascaApi | null>(null);
+  const [currentDID, setCurrentDID] = useState<string | null>(null);
   const { address, isConnected } = useAccount();
   const [isVendor, setIsVendor] = useState<boolean | undefined>(undefined);
+
+
+
 
   useEffect(() => {
     if (isConnected && address) {
@@ -37,6 +43,13 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const api = enableResult.data.getMascaApi();
         setMascaApi(api);
+
+        const did = await api.getDID();
+        if (isError(did)) {
+          console.error("Couldn't get DID:", did.error);
+        } else {
+          setCurrentDID(did.data);
+        }
       };
 
       initializeMasca();
@@ -54,7 +67,7 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <MascaContext.Provider
-      value={{ mascaApi, isVendor }}
+      value={{ mascaApi, currentDID, isVendor }}
     >
       {children}
     </MascaContext.Provider>
