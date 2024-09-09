@@ -19,7 +19,7 @@ export const createTicketHandler = async (req: Request, res: Response) => {
 
 export const getTicketsByWalletHandler = async (req: Request, res: Response) => {
   try {
-    const { wallet } = req.body;
+    const { wallet } = req.params;
 
     if (!wallet) {
       return res.status(400).json({ error: 'Wallet is required' });
@@ -34,7 +34,7 @@ export const getTicketsByWalletHandler = async (req: Request, res: Response) => 
 
 export const getActiveTicketsByWalletHandler = async (req: Request, res: Response) => {
   try {
-    const { wallet } = req.body;
+    const { wallet } = req.params;
 
     if (!wallet) {
       return res.status(400).json({ error: 'Wallet is required' });

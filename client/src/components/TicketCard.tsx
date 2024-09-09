@@ -2,42 +2,47 @@ import React from "react";
 import QRCode from "react-qr-code";
 
 interface TicketCardProps {
-  vc: object;
+  vc: any;
 }
 
 const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
-  // const [isExpanded, setIsExpanded] = useState(false) // TODO: Implement expandable ticket card
 
-  const dummyTicket = {
-    id: "0x1234567890abcdef",
-    vendor: "Stuk",
-    event: "Stuk rave",
-    time: "13.9.2024 21.00",
-    location: "Gosposvetska cesta 83, Maribor",
-    buyerSignature: "0x1234567890abcdef",
-    vendorSignature: "0xabcdef1234567890",
+  const { data } = vc;
+  const { credentialSubject, type } = data;
+
+  const ticketInfo = {
+    event: type?.[1] || "Unknown Event",
+    id: credentialSubject?.ticketID || "Unknown ID",
+    date: credentialSubject?.eventDate || "Unknown Date",
+    location: credentialSubject?.eventLocation || "Unknown Location",
   };
 
   return (
     <div className="flex gap-4 bg-white bg-opacity-10 rounded-lg p-6 w-max my-8">
       <div className="flex flex-col gap-4">
-        <h2 className="font-medium text-2xl text-sky-400 mb-4">Stuk rave</h2>
+        <h2 className="font-medium text-2xl text-sky-400 mb-4">{ticketInfo.event}</h2>
 
         <div className="flex gap-4 items-center">
-          <p className="w-1/5">Time</p>
+          <p className="w-1/5">ID</p>
           <div className="p-2 tracking-wide rounded-lg bg-white bg-opacity-5">
-            13.9.2024 21.00
+            {ticketInfo.id}
+          </div>
+        </div>
+        <div className="flex gap-4 items-center">
+          <p className="w-1/5">Date</p>
+          <div className="p-2 rounded-lg bg-white bg-opacity-5">
+            {new Date(ticketInfo.date).toLocaleString()}
           </div>
         </div>
         <div className="flex gap-4 items-center">
           <p className="w-1/5">Location</p>
           <div className="p-2 rounded-lg bg-white bg-opacity-5">
-            Gosposvetska cesta 83, Maribor
+            {ticketInfo.location}
           </div>
         </div>
       </div>
       <div className="p-4 bg-white rounded-lg">
-        <QRCode value={JSON.stringify(dummyTicket)} />
+        <QRCode value={JSON.stringify(vc)} />
       </div>
     </div>
   );

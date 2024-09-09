@@ -44,7 +44,6 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
         await api.switchDIDMethod('did:key');
         
         const did = await api.getDID();
-        console.log("DID:", did);
         if (isError(did)) {
           console.error("Couldn't get DID:", did.error);
         } else {
