@@ -67,7 +67,11 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <MascaContext.Provider
-      value={{ mascaApi, currentDID, isVendor }}
+      value={{ 
+        mascaApi,
+        currentDID,
+        isVendor 
+      }}
     >
       {children}
     </MascaContext.Provider>

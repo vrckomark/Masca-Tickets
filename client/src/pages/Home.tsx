@@ -4,11 +4,14 @@ import TextBox from "../components/TextBox";
 import { useAccount } from "wagmi";
 import { useMasca } from "../hooks/useMasca";
 import { createTicket } from "../util/fetch/createTicket";
+import { CircularProgress } from "@mui/material";
 
 const Home = () => {
   const [events, setEvents] = useState<object[]>([]);
   const { mascaApi, currentDID } = useMasca();
   const { address } = useAccount();
+  const [loading, setLoading] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleBuyTicket = async (eventId: string, alias: string) => {
     if (!mascaApi || !currentDID) {
@@ -17,24 +20,34 @@ const Home = () => {
     }
 
     try {
+      setLoading(eventId);
+
       console.log("Buying ticket for event:", eventId);
       const response = await createTicket(eventId, alias, address, currentDID);
 
       console.log("Ticket purchase response:", response);
       if (response.verifiableCredential) {
         // Save the VC to MetaMask Snap Masca
-        const saveResult = await mascaApi.saveCredential(response.verifiableCredential, {
-          store: ['ceramic', 'snap'],
-        });
+        const saveResult = await mascaApi.saveCredential(
+          response.verifiableCredential,
+          {
+            store: ["ceramic", "snap"],
+          }
+        );
 
         if (saveResult) {
           console.log("Ticket purchased and saved to Masca!");
-          alert("Ticket purchased and saved to Masca!");
+          setSuccessMessage(
+            "Ticket successfully purchased and saved to Masca!"
+          );
+          setTimeout(() => setSuccessMessage(null), 3000);
         }
       }
     } catch (error) {
       console.error("Error buying ticket:", error);
       alert("Failed to purchase ticket.");
+    } finally {
+      setLoading(null);
     }
   };
 
@@ -96,12 +109,23 @@ const Home = () => {
                 value={event.id}
                 name="eventId"
               >
-                Buy Ticket
+                {loading === event.id ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  "Buy Ticket"
+                )}
               </button>
             </div>
           ))}
       </div>
+      {/* Success Popup */}
+      {successMessage && (
+        <div className="fixed left-1/2 top-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+          {successMessage}
+        </div>
+      )}
     </div>
+    
   );
 };
 
