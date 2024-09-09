@@ -25,9 +25,6 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
   const { address, isConnected } = useAccount();
   const [isVendor, setIsVendor] = useState<boolean | undefined>(undefined);
 
-
-
-
   useEffect(() => {
     if (isConnected && address) {
       const initializeMasca = async () => {
@@ -43,8 +40,11 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const api = enableResult.data.getMascaApi();
         setMascaApi(api);
-
+        
+        await api.switchDIDMethod('did:key');
+        
         const did = await api.getDID();
+        console.log("DID:", did);
         if (isError(did)) {
           console.error("Couldn't get DID:", did.error);
         } else {
