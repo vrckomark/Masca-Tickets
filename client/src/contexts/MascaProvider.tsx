@@ -17,61 +17,58 @@ export const MascaContext = createContext<{
   isVendor: undefined,
 });
 
-const MascaProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const MascaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mascaApi, setMascaApi] = useState<MascaApi | null>(null);
   const [currentDID, setCurrentDID] = useState<string | null>(null);
   const { address, isConnected } = useAccount();
   const [isVendor, setIsVendor] = useState<boolean | undefined>(undefined);
 
-  useEffect(() => {
-    if (isConnected && address) {
-      const initializeMasca = async () => {
-        const enableResult = await enableMasca(address, {
-          snapId: "npm:@blockchain-lab-um/masca",
-          version: "1.2.2",
-        });
+  const initializeMasca = async () => {
+    if (!address || !isConnected) return;
 
-        if (isError(enableResult)) {
-          console.error("Failed to enable Masca:", enableResult.error);
-          return;
-        }
+    const enableResult = await enableMasca(address, {
+      snapId: "npm:@blockchain-lab-um/masca",
+      version: "1.2.2",
+    });
 
-        const api = enableResult.data.getMascaApi();
-        setMascaApi(api);
-        
-        await api.switchDIDMethod('did:key');
-        
-        const did = await api.getDID();
-        if (isError(did)) {
-          console.error("Couldn't get DID:", did.error);
-        } else {
-          setCurrentDID(did.data);
-        }
-      };
-
-      initializeMasca();
+    if (isError(enableResult)) {
+      console.error("Failed to enable Masca:", enableResult.error);
+      return;
     }
 
-    const checkVendorStatus = async () => {
-      if (isConnected && address) {
-        const vendorStatus = await getVendorStatus(address);
-        setIsVendor(vendorStatus.isVendor !== null);
-      }
-    };
+    const api = enableResult.data.getMascaApi();
+    setMascaApi(api);
+    
+    await api.switchDIDMethod("did:key");
 
-    checkVendorStatus();
+    const did = await api.getDID();
+    if (isError(did)) {
+      console.error("Couldn't get DID:", did.error);
+    } else {
+      setCurrentDID(did.data);
+    }
+  };
+
+  const checkVendorStatus = async () => {
+    if (isConnected && address) {
+      const vendorStatus = await getVendorStatus(address);
+      setIsVendor(vendorStatus.exists);
+    }
+  };
+
+  useEffect(() => {
+    if (isConnected && address) {
+      initializeMasca();
+      checkVendorStatus();
+    } else {
+      setMascaApi(null);
+      setCurrentDID(null);
+      setIsVendor(undefined);
+    }
   }, [isConnected, address]);
 
   return (
-    <MascaContext.Provider
-      value={{ 
-        mascaApi,
-        currentDID,
-        isVendor 
-      }}
-    >
+    <MascaContext.Provider value={{ mascaApi, currentDID, isVendor }}>
       {children}
     </MascaContext.Provider>
   );

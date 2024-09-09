@@ -15,18 +15,19 @@ const Home = () => {
 
   const handleBuyTicket = async (eventId: string, alias: string) => {
     if (!mascaApi || !currentDID) {
-      alert("Unable to buy ticket. Please ensure you're connected to Masca.");
+      alert("Unable to buy ticket. Please ensure you're connected to our DAPP.");
       return;
     }
-
+  
     try {
       setLoading(eventId);
-
+  
       console.log("Buying ticket for event:", eventId);
-      const response = await createTicket(eventId, alias, address, currentDID);
-
+      const response = await createTicket(eventId, address, alias, currentDID);
+  
       console.log("Ticket purchase response:", response);
-      if (response.verifiableCredential) {
+      
+      if (response.status === 201 && response.verifiableCredential) {
         // Save the VC to MetaMask Snap Masca
         const saveResult = await mascaApi.saveCredential(
           response.verifiableCredential,
@@ -34,14 +35,14 @@ const Home = () => {
             store: ["ceramic", "snap"],
           }
         );
-
+  
         if (saveResult) {
           console.log("Ticket purchased and saved to Masca!");
-          setSuccessMessage(
-            "Ticket successfully purchased and saved to Masca!"
-          );
+          setSuccessMessage("Ticket successfully purchased and saved to Masca!");
           setTimeout(() => setSuccessMessage(null), 3000);
         }
+      } else {
+        throw new Error(`Failed to purchase ticket: ${response.message}`);
       }
     } catch (error) {
       console.error("Error buying ticket:", error);
@@ -49,7 +50,7 @@ const Home = () => {
     } finally {
       setLoading(null);
     }
-  };
+  };  
 
   useEffect(() => {
     const fetchEvents = async () => {
