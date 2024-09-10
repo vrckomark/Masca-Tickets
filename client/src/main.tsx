@@ -8,7 +8,7 @@ import App from "./App";
 import { wagmiConfig } from "./wagmi";
 
 import "@rainbow-me/rainbowkit/styles.css";
-import "./index.css";
+import "./assets/styles/index.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import MascaProvider from "./contexts/MascaProvider";
 
