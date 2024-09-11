@@ -2,37 +2,44 @@ import { useEffect, useState } from "react";
 import { useMasca } from "../hooks/useMasca";
 import TicketCard from "../components/TicketCard";
 import { CircularProgress } from "@mui/material";
-import { getTicketsByWallet } from "../util/fetch/getTicketsByWallet";
 import { useAccount } from "wagmi";
+import { verifyTicket } from "../util/fetch/verifyTicket";
 
 const UserTickets = () => {
   const { mascaApi } = useMasca();
   const { address } = useAccount();
-  const [VCs, setVCs] = useState<object[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [tickets, setTickets] = useState([]);
+  const [verifiedTickets, setVerifiedTickets] = useState<object[]>([]);
 
   useEffect(() => {
-    const fetchTicketsFromDB = async () => {
-      if (!address) return;
-      try {
-        const dbTickets = await getTicketsByWallet(address);
-        setTickets(dbTickets);
-      } catch (error) {
-        console.error("Error fetching tickets from the database:", error);
-      }
-    };
-
     const fetchVCs = async () => {
       if (!mascaApi) return;
       setIsLoading(true);
       try {
         const credentials = await mascaApi.queryCredentials();
 
-        console.log("credentials:", credentials);
-
         if (credentials.success) {
-          setVCs(credentials.data);
+          const allVCs = credentials.data;
+
+          const verified = [];
+          for (const vc of allVCs) {
+            const vcToVerify = { credential: vc.data };
+
+            console.log("vcToVerify ", vcToVerify.credential);
+
+            try {
+              const verifyData = await verifyTicket(vcToVerify.credential);
+              if (verifyData.result) {
+                console.log("Verify Resoult: ", vcToVerify.credential);
+                verified.push(vcToVerify);
+              }
+            } catch (err) {
+              console.error(`Error verifying VC ${vc}:`, err);
+            }
+          }
+
+          console.log(verified);
+          setVerifiedTickets(verified);
         } else {
           console.error("Failed to query VCs:", credentials);
         }
@@ -44,47 +51,21 @@ const UserTickets = () => {
     };
 
     if (address) {
-      fetchTicketsFromDB();
       fetchVCs();
     }
-  }, [mascaApi]);
-
-  const filteredVCs = VCs?.filter((vc) => {
-    const { credentialSubject } = vc.data;
-    return tickets.some((ticket) => ticket.ticketId === credentialSubject?.ticketID);
-  });
-
-  const usedVCs = filteredVCs?.filter((vc) => {
-    const { credentialSubject } = vc.data;
-    const relatedTicket = tickets.find((ticket) => ticket.ticketId === credentialSubject?.ticketID);
-    return relatedTicket?.isUsed === true;
-  });
-
-  const unusedVCs = filteredVCs?.filter((vc) => {
-    const { credentialSubject } = vc.data;
-    const relatedTicket = tickets.find((ticket) => ticket.ticketId === credentialSubject?.ticketID);
-    return relatedTicket?.isUsed === false;
-  });
-
+  }, [mascaApi, address]);
 
   return (
     <div className="p-8 text-xl">
       {isLoading ? (
         <CircularProgress size={20} color="inherit" />
-      ) : !VCs?.length ? (
-        <p>No credentials found.</p>
+      ) : !verifiedTickets.length ? (
+        <p>No valid credentials found.</p>
       ) : (
         <>
-          <h2 className="mb-4 text-2xl font-semibold">Unused Tickets</h2>
+          <h2 className="mb-4 text-2xl font-semibold">Verified Tickets</h2>
           <div className="text-wrap">
-            {unusedVCs?.map((vc, index) => (
-              <TicketCard key={index} vc={vc} />
-            ))}
-          </div>
-
-          <h2 className="mb-4 mt-8 text-2xl font-semibold">Used Tickets</h2>
-          <div className="text-wrap">
-            {usedVCs?.map((vc, index) => (
+            {verifiedTickets.map((vc, index) => (
               <TicketCard key={index} vc={vc} />
             ))}
           </div>

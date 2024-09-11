@@ -1,37 +1,51 @@
 import { agent } from '../plugins/veramoAgent';
-import { Ticket } from '../db/types';
+import { Ticket, Event } from '../db/types';
 
 export const verifyTicket = async (credential: any) => {
   try {
+    const eventId = credential.credentialSubject.eventID;
+    const event = await Event.findOne({ where: { id: eventId }, relations: ['vendor'] });
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const alias = event.vendor.wallet;
+    const identifier = await agent.didManagerGetByAlias({ alias });
+    const vendorDID = identifier.did;
+
+    if (!identifier) {
+      throw { message: 'Identifier not found' };
+    }
+
     const result = await agent.verifyCredential({
       credential,
       verbose: true,
     });
 
     if (!result.verified) {
-      throw { verified: false, message: 'Credential verification failed' };
+      throw { message: 'Credential verification failed' };
     }
 
     const ticketID = result?.verifiableCredential?.credentialSubject?.ticketID;
 
     if (!ticketID) {
-      throw { verified: false, message: 'No ticketID found in credentialSubject' };
+      throw { message: 'No ticketID found in credentialSubject' };
     }
 
     const ticket = await Ticket.findOne({ where: { id: ticketID } });
 
     if (!ticket) {
-      throw { verified: false, message: 'Ticket not found' };
+      throw { verified: false, message: 'Ticket not found in database' };
     }
 
-    if (ticket.isUsed) {
-      throw { verified: false, message: 'Ticket has already been used' };
+    if (result.verified && credential.issuer.id === vendorDID && ticket.id === ticketID) {
+      console.log('Ticket is valid');
+      return true;
+    } else {
+      console.log('Invalid ticket');
+      return false;
     }
-
-    ticket.isUsed = true;
-    await ticket.save();
-
-    return { verified: true, message: 'Credential verified and ticket marked as used' };
   } catch (error) {
     throw new Error('Error verifying ticket: ' + error.message);
   }

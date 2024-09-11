@@ -7,8 +7,8 @@ interface TicketCardProps {
 
 const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
 
-  const { data } = vc;
-  const { credentialSubject, type } = data;
+  const { credential } = vc;
+  const { credentialSubject, type } = credential;
 
   const ticketInfo = {
     event: type?.[1] || "Unknown Event",
@@ -42,7 +42,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
         </div>
       </div>
       <div className="p-4 bg-white rounded-lg">
-        <QRCode value={JSON.stringify(credentialSubject.ticketID)} />
+        <QRCode value={JSON.stringify(ticketInfo.id)} />
       </div>
     </div>
   );
