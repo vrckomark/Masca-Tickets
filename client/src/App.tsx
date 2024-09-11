@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import SignUp from "./pages/SignUp";
 import CreateEvent from "./pages/CreateEvent";
 import UserTickets from "./pages/UserTickets";
+import TicketScanner from "./pages/TicketScanner";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/vendor" element={<Vendor />} />
         <Route path="/vendor/signup" element={<SignUp />} />
         <Route path="/vendor/create-event" element={<CreateEvent />} />
+        <Route path="/ticket-scan" element={<TicketScanner />} />
       </Routes>
     </div>
   );

@@ -1,11 +1,10 @@
 import React from "react";
-import QRCode from "react-qr-code";
 
 interface TicketCardProps {
   vc: any;
 }
 
-const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
+const UsedTicketCard: React.FC<TicketCardProps> = ({ vc }) => {
 
   const { credential } = vc;
   const { credentialSubject, type } = credential;
@@ -41,11 +40,11 @@ const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
           </div>
         </div>
       </div>
-      <div className="p-4 bg-white rounded-lg">
-        <QRCode value={JSON.stringify(ticketInfo.id)} />
+      <div className="p-4 bg-white rounded-lg text-black flex items-center">
+        <p>Used qr code</p>
       </div>
     </div>
   );
 };
 
-export default TicketCard;
+export default UsedTicketCard;

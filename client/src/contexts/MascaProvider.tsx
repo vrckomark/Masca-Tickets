@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState, useRef } from "react";
 import {
   enableMasca,
   isError,
@@ -23,8 +23,10 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const { address, isConnected } = useAccount();
   const [isVendor, setIsVendor] = useState<boolean | undefined>(undefined);
 
+  const mascaInitialized = useRef(false);
+
   const initializeMasca = async () => {
-    if (!address || !isConnected) return;
+    if (!address || !isConnected || mascaInitialized.current) return;
 
     const enableResult = await enableMasca(address, {
       snapId: "npm:@blockchain-lab-um/masca",
@@ -47,6 +49,8 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     } else {
       setCurrentDID(did.data);
     }
+
+    mascaInitialized.current = true;
   };
 
   const checkVendorStatus = async () => {
@@ -64,6 +68,7 @@ const MascaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       setMascaApi(null);
       setCurrentDID(null);
       setIsVendor(undefined);
+      mascaInitialized.current = false; 
     }
   }, [isConnected, address]);
 
