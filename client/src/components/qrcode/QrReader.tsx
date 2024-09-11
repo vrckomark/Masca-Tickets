@@ -117,7 +117,7 @@ const QrReader = () => {
       {/* Show API Result and Data Result if scan is successful */}
       {scannedResult && (
         <div className="popup-success">
-          <h2>
+          <h2 className="text-xl">
             {isVerifying ? (
               <div className="flex items-center gap-2">
                 <CircularProgress size={20} color="inherit" /> Validating ticket...
@@ -126,7 +126,7 @@ const QrReader = () => {
               apiResult || "Validation failed."
             )}
           </h2>
-          <p>Scanned Result: {scannedResult}</p>
+          {/* <p>Scanned Result: {scannedResult}</p> */}
           {!isVerifying && <button onClick={handleConfirm}>Confirm</button>}
         </div>
       )}

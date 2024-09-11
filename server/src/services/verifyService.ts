@@ -41,10 +41,13 @@ export const verifyTicket = async (credential: any) => {
 
     if (result.verified && credential.issuer.id === vendorDID && ticket.id === ticketID) {
       console.log('Ticket is valid');
-      return true;
+      return {
+        verified: true,
+        isUsed: ticket.isUsed,
+      };
     } else {
       console.log('Invalid ticket');
-      return false;
+      return { verified: false };
     }
   } catch (error) {
     throw new Error('Error verifying ticket: ' + error.message);
