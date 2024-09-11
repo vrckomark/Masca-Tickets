@@ -25,12 +25,9 @@ const UserTickets = () => {
           for (const vc of allVCs) {
             const vcToVerify = { credential: vc.data };
 
-            console.log("vcToVerify ", vcToVerify.credential);
-
             try {
               const verifyData = await verifyTicket(vcToVerify.credential);
               if (verifyData.result) {
-                console.log("Verify Resoult: ", vcToVerify.credential);
                 verified.push(vcToVerify);
               }
             } catch (err) {
@@ -38,7 +35,6 @@ const UserTickets = () => {
             }
           }
 
-          console.log(verified);
           setVerifiedTickets(verified);
         } else {
           console.error("Failed to query VCs:", credentials);

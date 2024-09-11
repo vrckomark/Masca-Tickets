@@ -50,3 +50,24 @@ export const verifyTicket = async (credential: any) => {
     throw new Error('Error verifying ticket: ' + error.message);
   }
 };
+
+export const useTicket = async(ticketID: string) => {
+  try {
+    const ticket = await Ticket.findOne({ where: { id: ticketID } });
+
+    if (!ticket) {
+      throw { message: 'Ticket not found in database' };
+    }
+
+    if (ticket.isUsed) {
+      throw new Error('Ticket is already used');
+    }
+
+    ticket.isUsed = true;
+    await ticket.save();
+
+    return ticket;
+  } catch(error) {
+    throw new Error('Error with using ticket: ' + error.message);
+  }
+}
