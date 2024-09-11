@@ -29,7 +29,7 @@ const QrReader = () => {
   // Fail
   const onScanFail = (err: string | Error) => {
     // 🖨 Print the "err" to browser console.
-    console.log(err);
+    //console.log(err);
   };
 
   useEffect(() => {
@@ -89,17 +89,11 @@ const QrReader = () => {
 
       {/* Show Data Result if scan is success */}
       {scannedResult && (
-        <p
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            zIndex: 99999,
-            color: "white",
-          }}
-        >
-          Scanned Result: {scannedResult}
-        </p>
+        <div className="popup-success">
+        <h2>Ticket is valid!</h2>
+        <p>Scanned Result: {scannedResult}</p>
+        <button onClick={() => setScannedResult("")}>Confirm</button>
+      </div>
       )}
     </div>
   );

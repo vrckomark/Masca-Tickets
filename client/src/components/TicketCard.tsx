@@ -42,7 +42,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
         </div>
       </div>
       <div className="p-4 bg-white rounded-lg">
-        <QRCode value={JSON.stringify(vc)} />
+        <QRCode value={JSON.stringify(credentialSubject.ticketID)} />
       </div>
     </div>
   );
