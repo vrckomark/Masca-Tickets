@@ -10,21 +10,22 @@ const UserTickets = () => {
   const { mascaApi } = useMasca();
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [unusedTickets, setUnusedTickets] = useState<object[]>([]);  // Unused tickets
-  const [usedTickets, setUsedTickets] = useState<object[]>([]);      // Used tickets
+  const [unusedTickets, setUnusedTickets] = useState<object[]>([]);
+  const [usedTickets, setUsedTickets] = useState<object[]>([]);
+  const [verifying, setVerifying] = useState(false);
 
   useEffect(() => {
     const fetchVCs = async () => {
       if (!mascaApi) return;
       setIsLoading(true);
+      setVerifying(true);
+
       try {
         const credentials = await mascaApi.queryCredentials();
 
         if (credentials.success) {
           const allVCs = credentials.data;
 
-          const verifiedUnused = [];
-          const verifiedUsed = [];
           for (const vc of allVCs) {
             const vcToVerify = { credential: vc.data };
 
@@ -32,12 +33,11 @@ const UserTickets = () => {
               const verifyData = await verifyTicket(vcToVerify.credential);
               console.log("verifyData: ", verifyData);
               if (verifyData && verifyData.result !== null) {
-                if(verifyData.result.verified) {
+                if (verifyData.result.verified) {
                   if (verifyData.result.isUsed) {
-                    verifiedUsed.push(vcToVerify);
-                    console.log("verifiedUsed",verifiedUsed);
+                    setUsedTickets((prevUsedTickets) => [...prevUsedTickets, vcToVerify]);
                   } else {
-                    verifiedUnused.push(vcToVerify);
+                    setUnusedTickets((prevUnusedTickets) => [...prevUnusedTickets, vcToVerify]);
                   }
                 }
               }
@@ -45,11 +45,6 @@ const UserTickets = () => {
               console.error(`Error verifying VC ${vc}:`, err);
             }
           }
-
-          console.log("unused:", verifiedUnused);
-          console.log("used:", verifiedUsed);
-          setUnusedTickets(verifiedUnused);
-          setUsedTickets(verifiedUsed);
         } else {
           console.error("Failed to query VCs:", credentials);
         }
@@ -57,6 +52,7 @@ const UserTickets = () => {
         console.error("Error querying credentials:", error);
       } finally {
         setIsLoading(false);
+        setVerifying(false);
       }
     };
 
@@ -67,7 +63,8 @@ const UserTickets = () => {
 
   return (
     <div className="p-8 text-xl">
-      {isLoading ? (
+      {/* Show loader when fetching and verifying credentials */}
+      {isLoading || verifying ? (
         <CircularProgress size={20} color="inherit" />
       ) : !unusedTickets.length && !usedTickets.length ? (
         <p>No valid credentials found.</p>

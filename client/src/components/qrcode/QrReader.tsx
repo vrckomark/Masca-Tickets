@@ -1,64 +1,57 @@
 import { useEffect, useRef, useState } from "react";
 import { CircularProgress } from "@mui/material";
-import { UseTicket } from "../../util/fetch/useTicket"; // Import the API call function
-
-// Styles
+import { UseTicket } from "../../util/fetch/useTicket";
 import "./QrStyles.css";
 
-// Qr Scanner
 import QrScanner from "qr-scanner";
 import QrFrame from "../../assets/qr-frame.svg";
 
 const QrReader = () => {
-  // QR States
+
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
   const qrBoxEl = useRef<HTMLDivElement>(null);
   const [qrOn, setQrOn] = useState<boolean>(true);
 
-  // Result and lock for scanning
   const [scannedResult, setScannedResult] = useState<string | undefined>("");
-  const [apiResult, setApiResult] = useState<string | null>(null); // For API call result
-  const [isVerifying, setIsVerifying] = useState<boolean>(false); // Loading state
-  const [scanComplete, setScanComplete] = useState<boolean>(false); // To track if scan is complete
+  const [apiResult, setApiResult] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [scanComplete, setScanComplete] = useState<boolean>(false);
 
   // Success
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
-    if (scanComplete) return; // Prevent further scans after the first successful one
+    if (scanComplete) return;
 
     let ticketID = result?.data;
 
     if (ticketID.startsWith('"') && ticketID.endsWith('"')) {
-      ticketID = ticketID.slice(1, -1); // Remove first and last character (the quotes)
+      ticketID = ticketID.slice(1, -1);
     }
 
-    setScanComplete(true); // Mark scan as complete
+    setScanComplete(true);
     setScannedResult(ticketID);
-    setIsVerifying(true); // Show loading spinner
-    setApiResult(null); // Reset the result for a fresh validation
+    setIsVerifying(true);
+    setApiResult(null);
 
-    // Pause scanning by disabling the listener, but keep the camera running
     scanner.current?.pause();
 
-    // Call the API to verify the ticket
     try {
       console.log("scanned data ", result?.data);
       console.log("cuted data ", ticketID);
-      const apiResponse = await UseTicket(ticketID); // Assuming result.data is the ticketID
+      const apiResponse = await UseTicket(ticketID);
       if (apiResponse.result) {
-        setApiResult("Ticket is valid!"); // Success message
+        setApiResult("Ticket is valid!");
       } else {
-        setApiResult("Ticket is invalid or already used."); // Error message
+        setApiResult("Ticket is invalid or already used.");
       }
     } catch (err) {
       console.error("Error verifying ticket:", err);
       setApiResult("Error verifying ticket.");
     } finally {
-      setIsVerifying(false); // Stop loading when the API call is done
+      setIsVerifying(false);
     }
   };
 
-  // Fail
   const onScanFail = (err: string | Error) => {
     console.log("QR Scan failed:", err);
   };
@@ -82,7 +75,6 @@ const QrReader = () => {
     }
 
     return () => {
-      // Cleanup when leaving the component (only stop when component unmounts or you change paths)
       scanner?.current?.stop();
     };
   }, []);
@@ -93,12 +85,11 @@ const QrReader = () => {
     }
   }, [qrOn]);
 
-  // Restart scanning after user confirms
   const handleConfirm = () => {
-    setScannedResult(""); // Reset the scanned result
-    setApiResult(null); // Reset the API result
-    setScanComplete(false); // Allow scanning again
-    scanner?.current?.start(); // Restart the scan listener
+    setScannedResult("");
+    setApiResult(null);
+    setScanComplete(false);
+    scanner?.current?.start();
   };
 
   return (
@@ -114,7 +105,6 @@ const QrReader = () => {
         />
       </div>
 
-      {/* Show API Result and Data Result if scan is successful */}
       {scannedResult && (
         <div className="popup-success">
           <h2 className="text-xl">
