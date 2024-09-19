@@ -29,4 +29,7 @@ pnpm dev
 Set up environment variables by creating a .env file in the server directory. You'll need to specify values for the following:
 
 DATABASE_URL=your_postgres_database_url
+Just create new supabase or other postgreSQL database...
+
 KMS_SECRET_KEY=your_secret_key_for_key_management
+'< you can generate a key by running `npx @veramo/cli config create-secret-key` in a terminal>'
