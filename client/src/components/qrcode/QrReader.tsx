@@ -8,9 +8,10 @@ import QrFrame from "../../assets/qr-frame.svg";
 
 interface eventProps {
   eventID: string;
+  ticketID: string;
 }
 
-const QrReader: React.FC<eventProps> = (eventID) => {
+const QrReader: React.FC<eventProps> = ({eventID, ticketID}) => {
 
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
@@ -22,28 +23,33 @@ const QrReader: React.FC<eventProps> = (eventID) => {
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [scanComplete, setScanComplete] = useState<boolean>(false);
 
+  function trimQuotes(trimData: string) {
+    if (trimData.startsWith('"') && trimData.endsWith('"')) {
+      return trimData.slice(1, -1);
+    }
+    return trimData;
+  }  
+
   // Success
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     if (scanComplete) return;
 
-    console.log("result", result);
-
-    let ticketID = result?.data;
-
-    if (ticketID.startsWith('"') && ticketID.endsWith('"')) {
-      ticketID = ticketID.slice(1, -1);
-    }
+    const ScanedEventID = trimQuotes(result?.data);
 
     setScanComplete(true);
-    setScannedResult(ticketID);
+    setScannedResult(ScanedEventID);
     setIsVerifying(true);
     setApiResult(null);
 
     scanner.current?.pause();
 
     try {
-      console.log("scanned data ", result?.data);
-      console.log("cuted data ", ticketID);
+      console.log("Scaned ticket:", ScanedEventID);
+      console.log("Card eventID:", eventID);
+      if(ScanedEventID !== eventID) {
+        throw new Error("Invalid ticket for this event.");
+      }
+
       const apiResponse = await UseTicket(ticketID);
       if (apiResponse.result) {
         setApiResult("Ticket is valid!");
@@ -122,7 +128,7 @@ const QrReader: React.FC<eventProps> = (eventID) => {
               apiResult || "Validation failed."
             )}
           </h2>
-          {/* <p>Scanned Result: {scannedResult}</p> */}
+          <p>Scanned Result: {scannedResult}</p>
           {!isVerifying && <button onClick={handleConfirm}>Confirm</button>}
         </div>
       )}

@@ -71,14 +71,12 @@ const UserTickets = () => {
 
   return (
     <div className="p-8 text-xl">
-      {/* Show loader when fetching and verifying credentials */}
       {isLoading || verifying ? (
         <CircularProgress size={20} color="inherit" />
       ) : !unusedTickets.length && !usedTickets.length ? (
         <p>No valid credentials found.</p>
       ) : (
         <>
-          {/* Unused Tickets */}
           <h2 className="mb-4 text-2xl font-semibold">Unused Tickets</h2>
           <div className="text-wrap">
             {unusedTickets.map((vc, index) => (
@@ -86,7 +84,6 @@ const UserTickets = () => {
             ))}
           </div>
 
-          {/* Used Tickets */}
           <h2 className="mb-4 text-2xl font-semibold mt-8">Used Tickets</h2>
           <div className="text-wrap">
             {usedTickets.map((vc, index) => (

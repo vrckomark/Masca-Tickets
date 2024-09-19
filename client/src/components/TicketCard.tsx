@@ -61,6 +61,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
           event={ticketInfo.event}
           eventID={ticketInfo.eventID}
           closeModal={closeModal}
+          ticketID={ticketInfo.id}
         />
       )}
     </div>

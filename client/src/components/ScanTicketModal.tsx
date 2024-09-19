@@ -4,10 +4,11 @@ import QrReader from "../components/qrcode/QrReader";
 interface TicketModalProps {
   event: string;
   eventID: string;
+  ticketID: string;
   closeModal: () => void;
 }
 
-const ScanTicketModal: React.FC<TicketModalProps> = ({ event, eventID, closeModal }) => {
+const ScanTicketModal: React.FC<TicketModalProps> = ({ event, eventID, closeModal, ticketID }) => {
 
     const handleClickOutside = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if (e.target === e.currentTarget) {
@@ -22,6 +23,7 @@ const ScanTicketModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
 
         <QrReader 
             eventID={eventID}
+            ticketID={ticketID}
         />
 
         <button
