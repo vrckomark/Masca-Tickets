@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CircularProgress } from "@mui/material";
 import { UseTicket } from "../../util/fetch/useTicket";
 import "./QrStyles.css";
@@ -6,7 +6,11 @@ import "./QrStyles.css";
 import QrScanner from "qr-scanner";
 import QrFrame from "../../assets/qr-frame.svg";
 
-const QrReader = () => {
+interface eventProps {
+  eventID: string;
+}
+
+const QrReader: React.FC<eventProps> = (eventID) => {
 
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
@@ -21,6 +25,8 @@ const QrReader = () => {
   // Success
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     if (scanComplete) return;
+
+    console.log("result", result);
 
     let ticketID = result?.data;
 
@@ -53,7 +59,7 @@ const QrReader = () => {
   };
 
   const onScanFail = (err: string | Error) => {
-    console.log("QR Scan failed:", err);
+    return;
   };
 
   useEffect(() => {

@@ -59,6 +59,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
       {isModalOpen && (
         <ScanTicketModal 
           event={ticketInfo.event}
+          eventID={ticketInfo.eventID}
           closeModal={closeModal}
         />
       )}
