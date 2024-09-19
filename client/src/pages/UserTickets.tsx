@@ -7,7 +7,7 @@ import { useAccount } from "wagmi";
 import { verifyTicket } from "../util/fetch/verifyTicket";
 
 const UserTickets = () => {
-  const { mascaApi } = useMasca();
+  const { mascaApi, currentDID } = useMasca();
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const [unusedTickets, setUnusedTickets] = useState<object[]>([]);
@@ -16,7 +16,7 @@ const UserTickets = () => {
 
   useEffect(() => {
     const fetchVCs = async () => {
-      if (!mascaApi) return;
+      if (!mascaApi || !currentDID) return;
       setIsLoading(true);
       setVerifying(true);
 
@@ -28,10 +28,17 @@ const UserTickets = () => {
 
           for (const vc of allVCs) {
             const vcToVerify = { credential: vc.data };
+            console.log("Verifying VC:", vcToVerify);
 
             try {
+              if(vcToVerify.credential.credentialSubject.id !== currentDID) {
+                console.log("Invalid issuer for VC", vcToVerify, "currentDID", currentDID);
+                throw new Error("Invalid issuer for VC");
+              }
+
               const verifyData = await verifyTicket(vcToVerify.credential);
               console.log("verifyData: ", verifyData);
+
               if (verifyData && verifyData.result !== null) {
                 if (verifyData.result.verified) {
                   if (verifyData.result.isUsed) {
@@ -59,7 +66,7 @@ const UserTickets = () => {
     if (address) {
       fetchVCs();
     }
-  }, [mascaApi, address]);
+  }, [mascaApi, address, currentDID]);
 
   return (
     <div className="p-8 text-xl">
