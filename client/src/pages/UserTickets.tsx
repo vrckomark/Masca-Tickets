@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { useMasca } from "../hooks/useMasca";
 import TicketCard from "../components/TicketCard";
 import UsedTicketCard from "../components/UsedTicketCard";
 import { CircularProgress } from "@mui/material";
 import { useAccount } from "wagmi";
 import { verifyTicket } from "../util/fetch/verifyTicket";
+import { useAppSelector } from "../store/hooks";
+import { selectUser } from "../store/userSlice";
 
 const UserTickets = () => {
-  const { mascaApi, currentDID } = useMasca();
+  const { currentDID, mascaApi } = useAppSelector(selectUser);
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const [unusedTickets, setUnusedTickets] = useState<object[]>([]);
@@ -33,7 +34,7 @@ const UserTickets = () => {
             const vcToVerify = { credential: vc.data };
 
             try {
-              if(vcToVerify.credential.credentialSubject.id !== currentDID) {
+              if (vcToVerify.credential.credentialSubject.id !== currentDID) {
                 continue;
               }
 
@@ -43,9 +44,15 @@ const UserTickets = () => {
               if (verifyData && verifyData.result !== null) {
                 if (verifyData.result.verified) {
                   if (verifyData.result.isUsed) {
-                    setUsedTickets((prevUsedTickets) => [...prevUsedTickets, vcToVerify]);
+                    setUsedTickets((prevUsedTickets) => [
+                      ...prevUsedTickets,
+                      vcToVerify,
+                    ]);
                   } else {
-                    setUnusedTickets((prevUnusedTickets) => [...prevUnusedTickets, vcToVerify]);
+                    setUnusedTickets((prevUnusedTickets) => [
+                      ...prevUnusedTickets,
+                      vcToVerify,
+                    ]);
                   }
                 }
               }

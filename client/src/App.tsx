@@ -6,8 +6,11 @@ import SignUp from "./pages/SignUp";
 import CreateEvent from "./pages/CreateEvent";
 import UserTickets from "./pages/UserTickets";
 import TicketScanner from "./pages/TicketScanner";
+import { useMasca } from "./hooks/useMasca";
 
-function App() {
+const App = () => {
+  useMasca();
+
   return (
     <div className="flex flex-col">
       <Navbar />
@@ -21,6 +24,6 @@ function App() {
       </Routes>
     </div>
   );
-}
+};
 
 export default App;

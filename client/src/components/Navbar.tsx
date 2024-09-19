@@ -1,12 +1,13 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Link, useLocation } from "react-router-dom";
 import { useAccount } from "wagmi";
-import { useMasca } from "../hooks/useMasca";
 import { CircularProgress } from "@mui/material";
+import { useAppSelector } from "../store/hooks";
+import { selectUser } from "../store/userSlice";
 
 const Navbar = () => {
   const { isConnected } = useAccount();
-  const { isVendor, currentDID, mascaApi } = useMasca();
+  const { isVendor, currentDID, mascaApi } = useAppSelector(selectUser);
 
   const location = useLocation();
   const isSignUpPage = location.pathname === "/vendor/signup";

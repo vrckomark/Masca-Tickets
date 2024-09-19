@@ -2,31 +2,38 @@ import { useEffect, useState } from "react";
 import { getEvents } from "../util/fetch/getEvents";
 import TextBox from "../components/TextBox";
 import { useAccount } from "wagmi";
-import { useMasca } from "../hooks/useMasca";
 import { createTicket } from "../util/fetch/createTicket";
 import { CircularProgress } from "@mui/material";
+import { useAppSelector } from "../store/hooks";
+import { selectUser } from "../store/userSlice";
 
 const Home = () => {
   const [events, setEvents] = useState<object[]>([]);
-  const { mascaApi, currentDID } = useMasca();
+  const { currentDID, mascaApi } = useAppSelector(selectUser);
   const { address } = useAccount();
   const [loading, setLoading] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleBuyTicket = async (eventId: string, alias: string) => {
-    if (!mascaApi || !currentDID) {
-      alert("Unable to buy ticket. Please ensure you're connected to our DAPP.");
+    if (!address) {
+      alert("Please connect your wallet to buy tickets.");
       return;
     }
-  
+    if (!mascaApi || !currentDID) {
+      alert(
+        "Unable to buy ticket. Please ensure you're connected to our DAPP."
+      );
+      return;
+    }
+
     try {
       setLoading(eventId);
-  
+
       console.log("Buying ticket for event:", eventId);
       const response = await createTicket(eventId, address, alias, currentDID);
-  
+
       console.log("Ticket purchase response:", response);
-      
+
       if (response.status === 201 && response.verifiableCredential) {
         // Save the VC to MetaMask Snap Masca
         const saveResult = await mascaApi.saveCredential(
@@ -35,10 +42,12 @@ const Home = () => {
             store: ["ceramic", "snap"],
           }
         );
-  
+
         if (saveResult) {
           console.log("Ticket purchased and saved to Masca!");
-          setSuccessMessage("Ticket successfully purchased and saved to Masca!");
+          setSuccessMessage(
+            "Ticket successfully purchased and saved to Masca!"
+          );
           setTimeout(() => setSuccessMessage(null), 3000);
         }
       } else {
@@ -50,7 +59,7 @@ const Home = () => {
     } finally {
       setLoading(null);
     }
-  };  
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -126,7 +135,6 @@ const Home = () => {
         </div>
       )}
     </div>
-    
   );
 };
 
