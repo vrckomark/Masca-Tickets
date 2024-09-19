@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import QRCode from "react-qr-code";
 import { getEventsByVendor } from "../util/fetch/getEventsByVendor";
 import TextBox from "../components/TextBox";
 import { useAccount } from "wagmi";
@@ -59,6 +60,11 @@ const Vendor = () => {
               )}
               {event.location && (
                 <TextBox label={event.location} customStyle="mt-4" />
+              )}
+              {event.id && (
+                <div className="p-4 bg-white rounded-lg flex justify-center">
+                  <QRCode value={JSON.stringify(event.id)} />
+                </div>
               )}
             </div>
           ))}

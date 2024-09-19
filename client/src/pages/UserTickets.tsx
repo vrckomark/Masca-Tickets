@@ -7,7 +7,7 @@ import { useAccount } from "wagmi";
 import { verifyTicket } from "../util/fetch/verifyTicket";
 
 const UserTickets = () => {
-  const { mascaApi } = useMasca();
+  const { mascaApi, currentDID } = useMasca();
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const [unusedTickets, setUnusedTickets] = useState<object[]>([]);
@@ -16,7 +16,10 @@ const UserTickets = () => {
 
   useEffect(() => {
     const fetchVCs = async () => {
-      if (!mascaApi) return;
+      setUnusedTickets([]);
+      setUsedTickets([]);
+
+      if (!mascaApi || !currentDID) return;
       setIsLoading(true);
       setVerifying(true);
 
@@ -30,8 +33,13 @@ const UserTickets = () => {
             const vcToVerify = { credential: vc.data };
 
             try {
+              if(vcToVerify.credential.credentialSubject.id !== currentDID) {
+                continue;
+              }
+
               const verifyData = await verifyTicket(vcToVerify.credential);
               console.log("verifyData: ", verifyData);
+
               if (verifyData && verifyData.result !== null) {
                 if (verifyData.result.verified) {
                   if (verifyData.result.isUsed) {
@@ -59,18 +67,16 @@ const UserTickets = () => {
     if (address) {
       fetchVCs();
     }
-  }, [mascaApi, address]);
+  }, [mascaApi, address, currentDID]);
 
   return (
     <div className="p-8 text-xl">
-      {/* Show loader when fetching and verifying credentials */}
       {isLoading || verifying ? (
         <CircularProgress size={20} color="inherit" />
       ) : !unusedTickets.length && !usedTickets.length ? (
         <p>No valid credentials found.</p>
       ) : (
         <>
-          {/* Unused Tickets */}
           <h2 className="mb-4 text-2xl font-semibold">Unused Tickets</h2>
           <div className="text-wrap">
             {unusedTickets.map((vc, index) => (
@@ -78,7 +84,6 @@ const UserTickets = () => {
             ))}
           </div>
 
-          {/* Used Tickets */}
           <h2 className="mb-4 text-2xl font-semibold mt-8">Used Tickets</h2>
           <div className="text-wrap">
             {usedTickets.map((vc, index) => (
