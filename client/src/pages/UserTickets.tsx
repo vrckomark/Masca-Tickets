@@ -16,6 +16,9 @@ const UserTickets = () => {
 
   useEffect(() => {
     const fetchVCs = async () => {
+      setUnusedTickets([]);
+      setUsedTickets([]);
+
       if (!mascaApi || !currentDID) return;
       setIsLoading(true);
       setVerifying(true);
@@ -28,12 +31,10 @@ const UserTickets = () => {
 
           for (const vc of allVCs) {
             const vcToVerify = { credential: vc.data };
-            console.log("Verifying VC:", vcToVerify);
 
             try {
               if(vcToVerify.credential.credentialSubject.id !== currentDID) {
-                console.log("Invalid issuer for VC", vcToVerify, "currentDID", currentDID);
-                throw new Error("Invalid issuer for VC");
+                continue;
               }
 
               const verifyData = await verifyTicket(vcToVerify.credential);

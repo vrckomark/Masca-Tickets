@@ -1,11 +1,13 @@
-import React from "react";
-import QRCode from "react-qr-code";
+import React, { useState } from "react";
+import ScanTicketModal from "../components/ScanTicketModal";
 
 interface TicketCardProps {
   vc: any;
 }
 
 const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { credential } = vc;
   const { credentialSubject, type } = credential;
@@ -15,10 +17,14 @@ const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
     id: credentialSubject?.ticketID || "Unknown ID",
     date: credentialSubject?.eventDate || "Unknown Date",
     location: credentialSubject?.eventLocation || "Unknown Location",
+    eventID: credentialSubject?.eventID || "Unknown Event ID",
   };
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
-    <div className="flex gap-4 bg-white bg-opacity-10 rounded-lg p-6 w-max my-8">
+    <div className="flex flex-col items-start gap-4 bg-white bg-opacity-10 rounded-lg p-6 w-max my-8">
       <div className="flex flex-col gap-4">
         <h2 className="font-medium text-2xl text-sky-400 mb-4">{ticketInfo.event}</h2>
 
@@ -40,10 +46,22 @@ const TicketCard: React.FC<TicketCardProps> = ({ vc }) => {
             {ticketInfo.location}
           </div>
         </div>
+        <div>
+          <button 
+            className="bg-sky-400 text-white rounded-lg p-2 w-full hover:shadow-lg hover:bg-sky-500"
+            onClick={openModal}
+          >
+            Scann Ticket
+          </button>
+        </div>
       </div>
-      <div className="p-4 bg-white rounded-lg">
-        <QRCode value={JSON.stringify(ticketInfo.id)} />
-      </div>
+
+      {isModalOpen && (
+        <ScanTicketModal 
+          event={ticketInfo.event}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };
