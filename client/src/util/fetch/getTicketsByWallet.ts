@@ -2,8 +2,10 @@ import { Address } from "viem";
 
 export const getTicketsByWallet = async (wallet: Address) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/getTicketsByWallet/${wallet}`);
-    
+    const response = await fetch(
+      `http://localhost:3000/api/getTicketsByWallet/${wallet}`
+    );
+
     if (!response.ok) {
       throw new Error("Failed to fetch events");
     }

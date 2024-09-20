@@ -6,6 +6,7 @@ import { createTicket } from "../util/fetch/createTicket";
 import { CircularProgress } from "@mui/material";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
+import { Address } from "viem";
 
 const Home = () => {
   const [events, setEvents] = useState<object[]>([]);
@@ -14,7 +15,7 @@ const Home = () => {
   const [loading, setLoading] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleBuyTicket = async (eventId: string, alias: string) => {
+  const handleBuyTicket = async (eventId: string, alias: Address) => {
     if (!address) {
       alert("Please connect your wallet to buy tickets.");
       return;
@@ -34,7 +35,11 @@ const Home = () => {
 
       console.log("Ticket purchase response:", response);
 
-      if (response.status === 201 && response.verifiableCredential) {
+      if (
+        response.status >= 200 &&
+        response.status < 300 &&
+        response.verifiableCredential
+      ) {
         // Save the VC to MetaMask Snap Masca
         const saveResult = await mascaApi.saveCredential(
           response.verifiableCredential,

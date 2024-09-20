@@ -11,8 +11,7 @@ interface eventProps {
   ticketID: string;
 }
 
-const QrReader: React.FC<eventProps> = ({eventID, ticketID}) => {
-
+const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
   const qrBoxEl = useRef<HTMLDivElement>(null);
@@ -28,7 +27,7 @@ const QrReader: React.FC<eventProps> = ({eventID, ticketID}) => {
       return trimData.slice(1, -1);
     }
     return trimData;
-  }  
+  }
 
   // Success
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
@@ -46,7 +45,7 @@ const QrReader: React.FC<eventProps> = ({eventID, ticketID}) => {
     try {
       console.log("Scaned ticket:", ScanedEventID);
       console.log("Card eventID:", eventID);
-      if(ScanedEventID !== eventID) {
+      if (ScanedEventID !== eventID) {
         throw new Error("Invalid ticket for this event.");
       }
 
@@ -93,7 +92,9 @@ const QrReader: React.FC<eventProps> = ({eventID, ticketID}) => {
 
   useEffect(() => {
     if (!qrOn) {
-      alert("Camera is blocked or not accessible. Please allow camera in your browser permissions and reload.");
+      alert(
+        "Camera is blocked or not accessible. Please allow camera in your browser permissions and reload."
+      );
     }
   }, [qrOn]);
 
@@ -122,7 +123,8 @@ const QrReader: React.FC<eventProps> = ({eventID, ticketID}) => {
           <h2 className="text-xl">
             {isVerifying ? (
               <div className="flex items-center gap-2">
-                <CircularProgress size={20} color="inherit" /> Validating ticket...
+                <CircularProgress size={20} color="inherit" /> Validating
+                ticket...
               </div>
             ) : (
               apiResult || "Validation failed."

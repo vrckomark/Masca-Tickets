@@ -1,4 +1,4 @@
-export const verifyTicket = async (credential: any) => {
+export const verifyTicket = async (credential: object) => {
   try {
     const res = await fetch("http://localhost:3000/api/verify-credential", {
       method: "POST",

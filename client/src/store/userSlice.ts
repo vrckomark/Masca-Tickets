@@ -1,16 +1,19 @@
 import { MascaApi } from "@blockchain-lab-um/masca-types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { TicketType } from "../types/Ticket";
 
 interface UserState {
   mascaApi: MascaApi | null;
   currentDID: string | null;
   isVendor: boolean | undefined;
+  tickets: TicketType[];
 }
 
 const initialState: UserState = {
   mascaApi: null,
   currentDID: null,
   isVendor: undefined,
+  tickets: [],
 };
 
 const userSlice = createSlice({
@@ -26,11 +29,15 @@ const userSlice = createSlice({
     setIsVendor(state, action: PayloadAction<boolean | undefined>) {
       state.isVendor = action.payload;
     },
+    setTickets(state, action: PayloadAction<TicketType[]>) {
+      state.tickets = action.payload;
+    },
   },
 });
 
-export const { setMascaApi, setCurrentDID, setIsVendor } = userSlice.actions;
+export const { setMascaApi, setCurrentDID, setIsVendor, setTickets } =
+  userSlice.actions;
 
-export const selectUser = (state: { masca: UserState }) => state.masca;
+export const selectUser = (state: { user: UserState }) => state.user;
 
 export default userSlice.reducer;

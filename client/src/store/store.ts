@@ -3,8 +3,14 @@ import userReducer from "./userSlice";
 
 export const store = configureStore({
   reducer: {
-    masca: userReducer,
+    user: userReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: ["user.mascaApi"],
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

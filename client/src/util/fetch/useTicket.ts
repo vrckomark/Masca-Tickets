@@ -1,4 +1,4 @@
-export const UseTicket = async ( ticketID: string ) => {
+export const UseTicket = async (ticketID: string) => {
   try {
     const res = await fetch("http://localhost:3000/api/useTicket", {
       method: "POST",
@@ -17,7 +17,12 @@ export const UseTicket = async ( ticketID: string ) => {
       result: data.result || null,
     };
   } catch (err) {
-    console.log('Error in useTicket:', err);
-    return { status: 400, message: `Error: ${err.message}`, isError: true, result: null };
+    console.log("Error in useTicket:", err);
+    return {
+      status: 400,
+      message: `Error: ${err}`,
+      isError: true,
+      result: null,
+    };
   }
 };

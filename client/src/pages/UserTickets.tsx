@@ -4,64 +4,57 @@ import UsedTicketCard from "../components/UsedTicketCard";
 import { CircularProgress } from "@mui/material";
 import { useAccount } from "wagmi";
 import { verifyTicket } from "../util/fetch/verifyTicket";
-import { useAppSelector } from "../store/hooks";
-import { selectUser } from "../store/userSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { selectUser, setTickets } from "../store/userSlice";
+import { TicketReturnType } from "../types/Ticket";
 
 const UserTickets = () => {
-  const { currentDID, mascaApi } = useAppSelector(selectUser);
+  const { currentDID, mascaApi, tickets } = useAppSelector(selectUser);
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [unusedTickets, setUnusedTickets] = useState<object[]>([]);
-  const [usedTickets, setUsedTickets] = useState<object[]>([]);
   const [verifying, setVerifying] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchVCs = async () => {
-      setUnusedTickets([]);
-      setUsedTickets([]);
-
-      if (!mascaApi || !currentDID) return;
+      if (!mascaApi || !currentDID || !address || tickets.length) return;
       setIsLoading(true);
       setVerifying(true);
 
       try {
         const credentials = await mascaApi.queryCredentials();
 
-        if (credentials.success) {
-          const allVCs = credentials.data;
+        if (!credentials.success)
+          return console.error("Failed to query VCs:", credentials);
 
-          for (const vc of allVCs) {
-            const vcToVerify = { credential: vc.data };
+        const allVCs = credentials.data;
 
-            try {
-              if (vcToVerify.credential.credentialSubject.id !== currentDID) {
-                continue;
-              }
-
-              const verifyData = await verifyTicket(vcToVerify.credential);
-              console.log("verifyData: ", verifyData);
-
-              if (verifyData && verifyData.result !== null) {
-                if (verifyData.result.verified) {
-                  if (verifyData.result.isUsed) {
-                    setUsedTickets((prevUsedTickets) => [
-                      ...prevUsedTickets,
-                      vcToVerify,
-                    ]);
-                  } else {
-                    setUnusedTickets((prevUnusedTickets) => [
-                      ...prevUnusedTickets,
-                      vcToVerify,
-                    ]);
-                  }
-                }
-              }
-            } catch (err) {
-              console.error(`Error verifying VC ${vc}:`, err);
-            }
+        for (const vc of allVCs) {
+          const vcData = vc.data;
+          if (vcData.credentialSubject.id !== currentDID) {
+            continue;
           }
-        } else {
-          console.error("Failed to query VCs:", credentials);
+
+          const verifyData = await verifyTicket(vcData);
+
+          if (
+            !verifyData ||
+            verifyData.result == null ||
+            !verifyData.result.verified
+          )
+            return console.error(`Error verifying VC ${JSON.stringify(vc)}:`);
+
+          dispatch(
+            setTickets([
+              ...tickets,
+              {
+                ...(vcData.credentialSubject as TicketReturnType),
+                isUsed: verifyData.result.isUsed,
+                type: vcData.type?.[1] || "Unknown Event",
+              },
+            ])
+          );
         }
       } catch (error) {
         console.error("Error querying credentials:", error);
@@ -71,31 +64,33 @@ const UserTickets = () => {
       }
     };
 
-    if (address) {
-      fetchVCs();
-    }
+    fetchVCs();
   }, [mascaApi, address, currentDID]);
 
   return (
     <div className="p-8 text-xl">
       {isLoading || verifying ? (
         <CircularProgress size={20} color="inherit" />
-      ) : !unusedTickets.length && !usedTickets.length ? (
+      ) : !tickets.length ? (
         <p>No valid credentials found.</p>
       ) : (
         <>
           <h2 className="mb-4 text-2xl font-semibold">Unused Tickets</h2>
           <div className="text-wrap">
-            {unusedTickets.map((vc, index) => (
-              <TicketCard key={index} vc={vc} />
-            ))}
+            {tickets
+              .filter((ticket) => !ticket.isUsed)
+              .map((ticket, index) => (
+                <TicketCard key={index} ticket={ticket} />
+              ))}
           </div>
 
           <h2 className="mb-4 text-2xl font-semibold mt-8">Used Tickets</h2>
           <div className="text-wrap">
-            {usedTickets.map((vc, index) => (
-              <UsedTicketCard key={index} vc={vc} />
-            ))}
+            {tickets
+              .filter((ticket) => ticket.isUsed)
+              .map((ticket, index) => (
+                <UsedTicketCard key={index} ticket={ticket} />
+              ))}
           </div>
         </>
       )}
