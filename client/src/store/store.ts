@@ -5,12 +5,6 @@ export const store = configureStore({
   reducer: {
     user: userReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredPaths: ["user.mascaApi"],
-      },
-    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

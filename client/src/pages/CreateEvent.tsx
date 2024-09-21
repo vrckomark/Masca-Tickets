@@ -53,7 +53,6 @@ const CreateEvent = () => {
       totalTickets,
       address
     );
-    console.log(response);
     if (!response.isError) {
       window.location.href = "/vendor";
     }

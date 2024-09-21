@@ -11,6 +11,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import "./assets/styles/index.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import { store } from "./store/store";
+import MascaApiProvider from "./components/providers/MascaApiProvider";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,9 @@ createRoot(document.getElementById("root")!).render(
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider theme={darkTheme()}>
-            <App />
+            <MascaApiProvider>
+              <App />
+            </MascaApiProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>

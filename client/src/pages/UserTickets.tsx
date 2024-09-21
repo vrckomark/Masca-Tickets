@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TicketCard from "../components/TicketCard";
 import UsedTicketCard from "../components/UsedTicketCard";
 import { CircularProgress } from "@mui/material";
@@ -7,9 +7,11 @@ import { verifyTicket } from "../util/fetch/verifyTicket";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { selectUser, setTickets } from "../store/userSlice";
 import { TicketReturnType } from "../types/Ticket";
+import { MascaContext } from "../components/providers/MascaAPIProvider";
 
 const UserTickets = () => {
-  const { currentDID, mascaApi, tickets } = useAppSelector(selectUser);
+  const { currentDID, tickets } = useAppSelector(selectUser);
+  const { mascaApi } = useContext(MascaContext);
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);

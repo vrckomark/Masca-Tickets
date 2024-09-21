@@ -6,10 +6,10 @@ import SignUp from "./pages/SignUp";
 import CreateEvent from "./pages/CreateEvent";
 import UserTickets from "./pages/UserTickets";
 import TicketScanner from "./pages/TicketScanner";
-import { useMasca } from "./hooks/useMasca";
+import { useInitializeWallet } from "./hooks/useInitializeWallet";
 
 const App = () => {
-  useMasca();
+  useInitializeWallet();
 
   return (
     <div className="flex flex-col">

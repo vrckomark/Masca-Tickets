@@ -4,10 +4,13 @@ import { useAccount } from "wagmi";
 import { CircularProgress } from "@mui/material";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
+import { useContext } from "react";
+import { MascaContext } from "./providers/MascaAPIProvider";
 
 const Navbar = () => {
   const { isConnected } = useAccount();
-  const { isVendor, currentDID, mascaApi } = useAppSelector(selectUser);
+  const { isVendor, currentDID } = useAppSelector(selectUser);
+  const { mascaApi } = useContext(MascaContext);
 
   const location = useLocation();
   const isSignUpPage = location.pathname === "/vendor/signup";

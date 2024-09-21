@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getEvents } from "../util/fetch/getEvents";
 import TextBox from "../components/TextBox";
 import { useAccount } from "wagmi";
@@ -7,10 +7,12 @@ import { CircularProgress } from "@mui/material";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
 import { Address } from "viem";
+import { MascaContext } from "../components/providers/MascaAPIProvider";
 
 const Home = () => {
   const [events, setEvents] = useState<object[]>([]);
-  const { currentDID, mascaApi } = useAppSelector(selectUser);
+  const { currentDID } = useAppSelector(selectUser);
+  const { mascaApi } = useContext(MascaContext);
   const { address } = useAccount();
   const [loading, setLoading] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);

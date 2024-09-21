@@ -1,13 +1,24 @@
-import { useEffect, useState } from "react";
-
+import React, { createContext, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { enableMasca, isError } from "@blockchain-lab-um/masca-connector";
-import { getVendorStatus } from "../util/fetch/getVendorStatus";
-import { useAppDispatch } from "../store/hooks";
-import { setCurrentDID, setIsVendor, setMascaApi } from "../store/userSlice";
+import { MascaApi } from "@blockchain-lab-um/masca-types";
+import { useAppDispatch } from "../../store/hooks";
+import { setCurrentDID } from "../../store/userSlice";
 
-export const useMasca = () => {
-  const { address, isConnected } = useAccount();
+interface MascaApiProviderProps {
+  children: React.ReactNode;
+}
+interface MascaContextType {
+  mascaApi: MascaApi | null;
+}
+
+export const MascaContext = createContext<MascaContextType>({
+  mascaApi: null,
+});
+
+const MascaApiProvider: React.FC<MascaApiProviderProps> = ({ children }) => {
+  const [mascaApi, setMascaApi] = useState<MascaApi | null>(null);
+  const { isConnected, address } = useAccount();
   const [isMascaInitialized, setIsMascaInitialized] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -25,7 +36,7 @@ export const useMasca = () => {
     }
 
     const api = enableResult.data.getMascaApi();
-    dispatch(setMascaApi(api));
+    setMascaApi(api);
 
     await api.switchDIDMethod("did:key");
 
@@ -39,22 +50,20 @@ export const useMasca = () => {
     setIsMascaInitialized(true);
   };
 
-  const checkVendorStatus = async () => {
-    if (isConnected && address) {
-      const vendorStatus = await getVendorStatus(address);
-      dispatch(setIsVendor(vendorStatus.exists));
-    }
-  };
-
   useEffect(() => {
     if (isConnected && address) {
       initializeMasca();
-      checkVendorStatus();
     } else {
-      dispatch(setMascaApi(null));
       dispatch(setCurrentDID(null));
-      dispatch(setIsVendor(undefined));
       setIsMascaInitialized(false);
     }
-  }, [isConnected, address]);
+  }, [isConnected, address, initializeMasca]);
+
+  return (
+    <MascaContext.Provider value={{ mascaApi }}>
+      {children}
+    </MascaContext.Provider>
+  );
 };
+
+export default MascaApiProvider;
