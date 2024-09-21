@@ -7,10 +7,11 @@ import { CircularProgress } from "@mui/material";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
 import { Address } from "viem";
-import { MascaContext } from "../components/providers/MascaAPIProvider";
+import { MascaContext } from "../components/providers/MascaApiProvider";
+import { EventType } from "../types/Event";
 
 const Home = () => {
-  const [events, setEvents] = useState<object[]>([]);
+  const [events, setEvents] = useState<EventType[]>([]);
   const { currentDID } = useAppSelector(selectUser);
   const { mascaApi } = useContext(MascaContext);
   const { address } = useAccount();
@@ -71,14 +72,8 @@ const Home = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       const data = await getEvents();
-      setEvents(
-        data.map((event: any) => {
-          return {
-            ...event,
-            date: isNaN(event.date) ? null : event.date,
-          };
-        })
-      );
+      if (!data?.length) return;
+      setEvents(data);
     };
     fetchEvents();
   }, []);
@@ -86,8 +81,8 @@ const Home = () => {
   return (
     <div className="p-8 text-xl flex flex-col gap-12">
       <div className="flex flex-wrap gap-8">
-        {events.length &&
-          events.map((event: any, i: number) => (
+        {events.length ? (
+          events.map((event: EventType, i: number) => (
             <div
               className="flex flex-col p-4 gap-2 rounded-lg bg-white bg-opacity-5 w-max"
               key={i}
@@ -133,7 +128,10 @@ const Home = () => {
                 )}
               </button>
             </div>
-          ))}
+          ))
+        ) : (
+          <></>
+        )}
       </div>
       {/* Success Popup */}
       {successMessage && (

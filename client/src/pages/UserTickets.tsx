@@ -71,7 +71,7 @@ const UserTickets = () => {
 
   return (
     <div className="p-8 text-xl">
-      {isLoading || verifying ? (
+      {isLoading || (verifying && !tickets.length) ? (
         <CircularProgress size={20} color="inherit" />
       ) : !tickets.length ? (
         <p>No valid credentials found.</p>
