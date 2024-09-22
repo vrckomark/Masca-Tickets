@@ -43,8 +43,6 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
     scanner.current?.pause();
 
     try {
-      console.log("Scaned ticket:", ScanedEventID);
-      console.log("Card eventID:", eventID);
       if (ScanedEventID !== eventID) {
         throw new Error("Invalid ticket for this event.");
       }

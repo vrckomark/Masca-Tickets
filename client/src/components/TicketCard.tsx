@@ -22,7 +22,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
         <div className="flex gap-4 items-center">
           <p className="w-1/5">ID</p>
           <div className="p-2 tracking-wide rounded-lg bg-white bg-opacity-5">
-            {ticket.id}
+            {ticket.ticketID}
           </div>
         </div>
         <div className="flex gap-4 items-center">
@@ -52,7 +52,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
           event={ticket.type}
           eventID={ticket.eventID}
           closeModal={closeModal}
-          ticketID={ticket.id}
+          ticketID={ticket.ticketID}
         />
       )}
     </div>
