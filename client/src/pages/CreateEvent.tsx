@@ -3,6 +3,7 @@ import { createEvent } from "../util/fetch/createEvent";
 import { useAccount } from "wagmi";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export type DateTime = {
   day: number;
@@ -27,6 +28,7 @@ const CreateEvent = () => {
   });
   const { isVendor } = useAppSelector(selectUser);
   const { address } = useAccount();
+  const navigate = useNavigate();
 
   if (!isVendor) return <p>Unauthorized</p>;
 
@@ -54,7 +56,7 @@ const CreateEvent = () => {
       address
     );
     if (!response.isError) {
-      window.location.href = "/vendor";
+      navigate("/vendor");
     }
   };
 

@@ -1,11 +1,10 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Link, useLocation } from "react-router-dom";
 import { useAccount } from "wagmi";
-import { CircularProgress } from "@mui/material";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
 import { useContext } from "react";
-import { MascaContext } from "./providers/MascaAPIProvider";
+import { MascaContext } from "./providers/MascaApiProvider";
 
 const Navbar = () => {
   const { isConnected } = useAccount();
@@ -42,21 +41,6 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-6 items-center">
-        {/* Display a status message if Masca is connected */}
-        {isConnected &&
-          (isMascaReady ? (
-            <p className="font-semibold text-green-500 italic">
-              Masca Connected
-            </p>
-          ) : (
-            <>
-              <span className="font-semibold text-red-500 italic">
-                Masca Not Connected
-              </span>
-              <CircularProgress size={20} color="inherit" />
-            </>
-          ))}
-
         {/* Show the "New Event" button only if Masca is ready and the user is a vendor */}
         {isVendor && isConnected && isMascaReady && (
           <Link
@@ -68,23 +52,33 @@ const Navbar = () => {
         )}
 
         {/* Show the Scan tickets button only if Masca is ready */}
-
-        <Link
-          to="/ticket-scan"
-          className="px-4 py-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
-        >
-          Scan tickets
-        </Link>
-
-        {/* Show link to user's tickets if connected */}
-        {isConnected && (
+        {isMascaReady && !isVendor && (
           <Link
-            to="/tickets"
-            className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
+            to="/ticket-scan"
+            className="px-4 py-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
           >
-            Your tickets
+            Scan tickets
           </Link>
         )}
+
+        {/* Show link to user's tickets if connected */}
+        {isConnected ? (
+          isVendor ? (
+            <Link
+              to="/vendor"
+              className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
+            >
+              Your events
+            </Link>
+          ) : (
+            <Link
+              to="/tickets"
+              className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
+            >
+              Your tickets
+            </Link>
+          )
+        ) : null}
 
         {/* Rainbowkit Connect Button */}
         {!isSignUpPage && <ConnectButton />}

@@ -81,54 +81,57 @@ const Home = () => {
   return (
     <div className="p-8 text-xl flex flex-col gap-12">
       <div className="flex flex-wrap gap-8">
-        {events.length ? (
-          events.map((event: EventType, i: number) => (
-            <div
-              className="flex flex-col p-4 gap-2 rounded-lg bg-white bg-opacity-5 w-max"
-              key={i}
-            >
-              <div className="flex gap-6 items-center">
-                <h2>{event.name}</h2>
-                <TextBox
-                  label={`Tickets left ${event.availableTickets}`}
-                  customStyle="font-medium py-2"
-                />
-              </div>
-              <pre
-                style={{ fontFamily: "Inter Tight , system-ui" }}
-                className="text-lg opacity-60 mt-6 "
+        {events.length && events.filter((event) => event.date > new Date()) ? (
+          events
+            .filter((event) => event.date > new Date())
+            .map((event: EventType, i: number) => (
+              <div
+                className="flex flex-col p-4 gap-2 rounded-lg bg-white bg-opacity-5 w-max"
+                key={i}
               >
-                {event.description}
-              </pre>
-              {event.date && (
-                <div className="flex gap-4 mt-4">
-                  <TextBox label={event.date.toDateString()} />
+                <div className="flex gap-6 items-center">
+                  <h2>{event.name}</h2>
                   <TextBox
-                    label={`${event.date.getHours()}:${
-                      event.date.getMinutes() == 0
-                        ? "00"
-                        : event.date.getMinutes()
-                    }`}
+                    label={`Tickets left ${event.availableTickets}`}
+                    customStyle="font-medium py-2"
                   />
                 </div>
-              )}
-              {event.location && (
-                <TextBox label={event.location} customStyle="mt-4" />
-              )}
-              <button
-                onClick={() => handleBuyTicket(event.id, event.vendor.wallet)}
-                className="bg-sky-500 hover:bg-sky-400  text-white px-4 py-2 mt-4 rounded-lg button-hover"
-                value={event.id}
-                name="eventId"
-              >
-                {loading === event.id ? (
-                  <CircularProgress size={20} color="inherit" />
-                ) : (
-                  "Buy Ticket"
+                <pre
+                  style={{ fontFamily: "Inter Tight , system-ui" }}
+                  className="text-lg opacity-60 mt-6 "
+                >
+                  {event.description}
+                </pre>
+                {event.date && (
+                  <div className="flex gap-4 mt-4">
+                    <TextBox label={event.date.toDateString()} />
+                    <TextBox
+                      label={`${event.date.getHours()}:${
+                        event.date.getMinutes() == 0
+                          ? "00"
+                          : event.date.getMinutes()
+                      }`}
+                    />
+                  </div>
                 )}
-              </button>
-            </div>
-          ))
+                {event.location && (
+                  <TextBox label={event.location} customStyle="mt-4" />
+                )}
+                <button
+                  onClick={() => handleBuyTicket(event.id, event.vendor.wallet)}
+                  className="bg-sky-500 hover:bg-sky-400  text-white px-4 py-2 mt-4 rounded-lg button-hover disabled:bg-white disabled:bg-opacity-50 font-medium"
+                  value={event.id}
+                  disabled={!mascaApi || !currentDID || !address}
+                  name="eventId"
+                >
+                  {loading === event.id ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : (
+                    "Buy Ticket"
+                  )}
+                </button>
+              </div>
+            ))
         ) : (
           <></>
         )}

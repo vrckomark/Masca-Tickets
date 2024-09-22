@@ -7,6 +7,7 @@ import CreateEvent from "./pages/CreateEvent";
 import UserTickets from "./pages/UserTickets";
 import TicketScanner from "./pages/TicketScanner";
 import { useInitializeWallet } from "./hooks/useInitializeWallet";
+import MascaStatus from "./components/ui/MascaStatus";
 
 const App = () => {
   useInitializeWallet();
@@ -14,6 +15,7 @@ const App = () => {
   return (
     <div className="flex flex-col">
       <Navbar />
+      <MascaStatus />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/tickets" element={<UserTickets />} />
