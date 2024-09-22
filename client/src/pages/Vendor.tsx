@@ -5,12 +5,12 @@ import TextBox from "../components/TextBox";
 import { useAccount } from "wagmi";
 
 const Vendor = () => {
-
   const [events, setEvents] = useState<object[]>([]);
   const { address } = useAccount();
 
   useEffect(() => {
     const fetchEvents = async () => {
+      if (!address) return;
       const data = await getEventsByVendor(address);
       setEvents(
         data.map((event: any) => {

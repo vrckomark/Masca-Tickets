@@ -1,7 +1,8 @@
 import React, { FormEvent, useState } from "react";
 import { createEvent } from "../util/fetch/createEvent";
-import { useMasca } from "../hooks/useMasca";
 import { useAccount } from "wagmi";
+import { useAppSelector } from "../store/hooks";
+import { selectUser } from "../store/userSlice";
 
 export type DateTime = {
   day: number;
@@ -24,7 +25,7 @@ const CreateEvent = () => {
     hour: now.getHours(),
     minute: now.getMinutes(),
   });
-  const { isVendor } = useMasca();
+  const { isVendor } = useAppSelector(selectUser);
   const { address } = useAccount();
 
   if (!isVendor) return <p>Unauthorized</p>;
@@ -52,7 +53,6 @@ const CreateEvent = () => {
       totalTickets,
       address
     );
-    console.log(response);
     if (!response.isError) {
       window.location.href = "/vendor";
     }
