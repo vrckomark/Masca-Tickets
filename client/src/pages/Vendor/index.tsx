@@ -23,7 +23,7 @@ const Vendor = () => {
       <div className="flex flex-wrap gap-8">
         {events.length ? (
           events
-            .filter((event) => event.date > new Date())
+            .filter((event) => new Date(event.date) > new Date())
             .map((event: EventType, index: number) => (
               <EventCard event={event} key={index} />
             ))
@@ -32,12 +32,12 @@ const Vendor = () => {
         )}
       </div>
       {events.length &&
-      events.filter((event) => event.date < new Date()).length ? (
+      events.filter((event) => new Date(event.date) < new Date()).length ? (
         <>
           <h1 className="text-3xl font-medium px-4">Past Events</h1>
           <div className="flex flex-wrap gap-8">
             {events
-              .filter((event) => event.date < new Date())
+              .filter((event) => new Date(event.date) < new Date())
               .map((event: EventType, index: number) => (
                 <EventCard event={event} key={index} />
               ))}

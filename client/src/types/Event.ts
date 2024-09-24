@@ -17,5 +17,5 @@ export type EventReturnType = {
 };
 
 export type EventType = Omit<EventReturnType, "dateTime"> & {
-  date: Date;
+  date: string;
 };

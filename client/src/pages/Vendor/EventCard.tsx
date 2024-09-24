@@ -33,10 +33,10 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         )}
         {event.date && (
           <div className="flex gap-4">
-            <TextBox label={event.date.toDateString()} />
+            <TextBox label={new Date(event.date).toDateString()} />
             <TextBox
-              label={`${event.date.getHours()}:${
-                event.date.getMinutes() == 0 ? "00" : event.date.getMinutes()
+              label={`${new Date(event.date).getHours()}:${
+                new Date(event.date).getMinutes() == 0 ? "00" : new Date(event.date).getMinutes()
               }`}
             />
           </div>

@@ -50,7 +50,10 @@ const UserTickets = () => {
           id: ticket.id,
           ticketId: ticket.ticketID,
           isUsed: verifyData.result.isUsed,
-          event,
+          event: {
+            ...event,
+            date: new Date(event.date).toISOString(),
+          },
         });
       } catch (error) {
         console.log(`Error verifying VC:${JSON.stringify(credential)}`, error);
@@ -107,7 +110,7 @@ const UserTickets = () => {
           {tickets.some((ticket) => ticket.isUsed) && (
             <>
               <h2 className="mb-4 text-2xl font-semibold mt-8">Used Tickets</h2>
-              <div className="text-wrap">
+              <div className="text-wrap gap-6 flex flex-wrap">
                 {tickets
                   .filter((ticket) => ticket.isUsed)
                   .map((ticket, index) => (

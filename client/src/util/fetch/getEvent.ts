@@ -9,7 +9,7 @@ export const getEvent = async (id: string) => {
 
     return {
       ...rest,
-      date: new Date(dateTime || ""),
+      date: dateTime || "",
     } as EventType;
   } catch (err) {
     console.error(err);
