@@ -1,8 +1,8 @@
 import React from "react";
-import { EventType } from "../../../types/Event";
-import TextBox from "../../TextBox";
 import QRCode from "react-qr-code";
 import { FaLocationDot } from "react-icons/fa6";
+import TextBox from "../../components/TextBox";
+import { EventType } from "../../types/Event";
 
 interface EventCardProps {
   event: EventType;

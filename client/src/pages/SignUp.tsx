@@ -1,6 +1,6 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import React, { FormEvent, useState } from "react";
 import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { addVendor } from "../util/fetch/addVendor";
 
 const SignUp = () => {

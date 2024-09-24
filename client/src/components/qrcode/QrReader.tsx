@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import QrScanner from "qr-scanner";
 import { CircularProgress } from "@mui/material";
 import { UseTicket } from "../../util/fetch/useTicket";
 import "./QrStyles.css";
-
-import QrScanner from "qr-scanner";
 import QrFrame from "../../assets/qr-frame.svg";
 
 interface eventProps {

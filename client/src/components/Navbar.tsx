@@ -1,6 +1,8 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Link, useLocation } from "react-router-dom";
 import { useAccount } from "wagmi";
+import { IoQrCode } from "react-icons/io5";
+import { BsTicketPerforatedFill } from "react-icons/bs";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
 import { useContext } from "react";
@@ -42,7 +44,7 @@ const Navbar = () => {
 
       <div className="flex gap-6 items-center">
         {/* Show the "New Event" button only if Masca is ready and the user is a vendor */}
-        {isVendor && isConnected && isMascaReady && (
+        {isVendor && isConnected && (
           <Link
             to="/vendor/create-event"
             className="px-4 py-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
@@ -55,9 +57,10 @@ const Navbar = () => {
         {isMascaReady && !isVendor && (
           <Link
             to="/ticket-scan"
-            className="px-4 py-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
+            className="px-4 py-2 flex items-center gap-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
           >
-            Scan tickets
+            <IoQrCode />
+            <p>Scan ticket</p>
           </Link>
         )}
 
@@ -73,9 +76,10 @@ const Navbar = () => {
           ) : (
             <Link
               to="/tickets"
-              className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
+              className="color-sky-500 flex items-center gap-2 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
             >
-              Your tickets
+              <BsTicketPerforatedFill />
+              <p>Your tickets</p>
             </Link>
           )
         ) : null}

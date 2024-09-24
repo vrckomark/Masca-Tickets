@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
-import { createEvent } from "../util/fetch/createEvent";
 import { useAccount } from "wagmi";
+import { createEvent } from "../util/fetch/createEvent";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
 import { useNavigate } from "react-router-dom";

@@ -1,13 +1,14 @@
 import { useContext, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+import { CircularProgress } from "@mui/material";
 import TicketCard from "../components/TicketCard";
 import UsedTicketCard from "../components/UsedTicketCard";
-import { CircularProgress } from "@mui/material";
-import { useAccount } from "wagmi";
 import { verifyTicket } from "../util/fetch/verifyTicket";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { selectUser, setTickets } from "../store/userSlice";
 import { TicketReturnType, TicketType } from "../types/Ticket";
 import { MascaContext } from "../components/providers/MascaApiProvider";
+import { getEvent } from "../util/fetch/getEvent";
 
 const UserTickets = () => {
   const { currentDID, tickets } = useAppSelector(selectUser);
@@ -20,11 +21,12 @@ const UserTickets = () => {
 
   const getVerifiedTickets = async (credentials: any[]) => {
     const copyTickets: TicketType[] = [];
-    for (const vc of credentials) {
-      if (vc.credentialSubject.id !== currentDID) continue;
+
+    for (const credential of credentials) {
+      if (credential.credentialSubject.id !== currentDID) continue;
 
       try {
-        const verifyData = await verifyTicket(vc);
+        const verifyData = await verifyTicket(credential);
 
         if (
           !verifyData ||
@@ -35,13 +37,23 @@ const UserTickets = () => {
           continue;
         }
 
+        const ticket = credential.credentialSubject as TicketReturnType;
+
+        const event = await getEvent(ticket.eventID);
+
+        if (!event) {
+          console.log("Event not found for ticket:", ticket.eventID);
+          continue;
+        }
+
         copyTickets.push({
-          ...(vc.credentialSubject as TicketReturnType),
-          isUsed: verifyData.result.isUsed,
-          type: vc.type?.[1] || "Unknown Event",
+          id: ticket.id,
+          ticketId: ticket.ticketID,
+          isUsed: ticket.isUsed,
+          event,
         });
       } catch (error) {
-        console.log(`Error verifying VC:${JSON.stringify(vc)}`, error);
+        console.log(`Error verifying VC:${JSON.stringify(credential)}`, error);
       }
     }
     return copyTickets;
@@ -84,7 +96,7 @@ const UserTickets = () => {
       ) : (
         <>
           <h2 className="mb-4 text-2xl font-semibold">Unused Tickets</h2>
-          <div className="text-wrap">
+          <div className="text-wrap gap-6 flex flex-wrap">
             {tickets
               .filter((ticket) => !ticket.isUsed)
               .map((ticket, index) => (
@@ -92,14 +104,18 @@ const UserTickets = () => {
               ))}
           </div>
 
-          <h2 className="mb-4 text-2xl font-semibold mt-8">Used Tickets</h2>
-          <div className="text-wrap">
-            {tickets
-              .filter((ticket) => ticket.isUsed)
-              .map((ticket, index) => (
-                <UsedTicketCard key={index} ticket={ticket} />
-              ))}
-          </div>
+          {tickets.some((ticket) => ticket.isUsed) && (
+            <>
+              <h2 className="mb-4 text-2xl font-semibold mt-8">Used Tickets</h2>
+              <div className="text-wrap">
+                {tickets
+                  .filter((ticket) => ticket.isUsed)
+                  .map((ticket, index) => (
+                    <TicketCard key={index} ticket={ticket} />
+                  ))}
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

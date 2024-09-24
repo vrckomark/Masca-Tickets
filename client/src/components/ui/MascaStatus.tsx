@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
+import { useAccount } from "wagmi";
+import { CircularProgress } from "@mui/material";
 import { useAppSelector } from "../../store/hooks";
 import { selectUser } from "../../store/userSlice";
 import { MascaContext } from "../providers/MascaApiProvider";
-import { useAccount } from "wagmi";
-import { CircularProgress } from "@mui/material";
 
 const MascaStatus = () => {
   const { currentDID } = useAppSelector(selectUser);

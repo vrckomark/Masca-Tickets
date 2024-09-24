@@ -1,21 +1,27 @@
 import React, { useState } from "react";
-import ScanTicketModal from "../components/ScanTicketModal";
-import { TicketType } from "../types/Ticket";
-import TextBox from "./TextBox";
+import { Address } from "viem";
+import { MascaApi } from "@blockchain-lab-um/masca-types";
+import { CircularProgress } from "@mui/material";
+import { EventType } from "../../types/Event";
+import TextBox from "../../components/TextBox";
 import { FaLocationDot } from "react-icons/fa6";
-import { IoQrCode } from "react-icons/io5";
 
-interface TicketCardProps {
-  ticket: TicketType;
+interface EventCardProps {
+  event: EventType;
+  buyTicket: (eventId: string, alias: Address) => void;
+  walletData?: {
+    address: Address;
+    currentDID: string;
+    mascaApi: MascaApi;
+  };
 }
 
-const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const event = ticket.event;
+const EventCard: React.FC<EventCardProps> = ({
+  event,
+  buyTicket,
+  walletData,
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="flex flex-col py-8 px-6 gap-6 rounded-lg bg-white bg-opacity-5 w-max">
@@ -54,28 +60,24 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
         {event.description}
       </pre>
       <button
-        onClick={openModal}
-        className="bg-sky-500 hover:bg-sky-400  text-white py-4 rounded-lg button-hover disabled:bg-white disabled:bg-opacity-50  flex items-center gap-4 justify-center"
+        onClick={() => {
+          setIsLoading(true);
+          buyTicket(event.id, event.vendor.wallet);
+          setIsLoading(false);
+        }}
+        className="bg-sky-500 hover:bg-sky-400  text-white px-4 py-2 rounded-lg button-hover disabled:bg-white disabled:bg-opacity-50 font-medium"
         value={event.id}
-        disabled={ticket.isUsed}
+        disabled={!walletData}
         name="eventId"
       >
-        <IoQrCode />
-        <p className="font-semibold">
-          {ticket.isUsed ? "Ticket Scanned" : "Scan Ticket"}
-        </p>
+        {isLoading ? (
+          <CircularProgress size={20} color="inherit" />
+        ) : (
+          "Buy Ticket"
+        )}
       </button>
-
-      {isModalOpen && (
-        <ScanTicketModal
-          event={event.name}
-          eventID={event.id}
-          closeModal={closeModal}
-          ticketID={ticket.ticketId}
-        />
-      )}
     </div>
   );
 };
 
-export default TicketCard;
+export default EventCard;

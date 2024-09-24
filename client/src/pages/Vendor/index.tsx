@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import QRCode from "react-qr-code";
-import { getEventsByVendor } from "../util/fetch/getEventsByVendor";
-import TextBox from "../components/TextBox";
 import { useAccount } from "wagmi";
-import { EventType } from "../types/Event";
-import EventCard from "../components/ui/cards/EventCard";
+import { EventType } from "../../types/Event";
+import { getEventsByVendor } from "../../util/fetch/getEventsByVendor";
+import EventCard from "./EventCard";
 
 const Vendor = () => {
   const [events, setEvents] = useState<EventType[]>([]);

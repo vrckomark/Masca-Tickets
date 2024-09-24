@@ -10,7 +10,7 @@ export type EventReturnType = {
   id: string;
   name: string;
   description: string;
-  dateTime: string;
+  dateTime?: string;
   location: string;
   availableTickets: number;
   vendor: VendorType;
