@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAccount } from "wagmi";
 import { IoQrCode } from "react-icons/io5";
 import { BsTicketPerforatedFill } from "react-icons/bs";
+import { MdEvent } from "react-icons/md";
 import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
 import { useContext } from "react";
@@ -26,8 +27,8 @@ const Navbar = () => {
         </Link>
         {/* Display vendor link only if the user is connected and is a vendor */}
         {isVendor && isConnected && (
-          <Link to="/vendor" className="ml-4">
-            <p className="font-medium text-xl text-sky-300 italic">Vendors</p>
+          <Link to="/vendor" className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg">
+            Dashboard
           </Link>
         )}
 
@@ -49,18 +50,7 @@ const Navbar = () => {
             to="/vendor/create-event"
             className="px-4 py-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
           >
-            + New Event
-          </Link>
-        )}
-
-        {/* Show the Scan tickets button only if Masca is ready */}
-        {isMascaReady && !isVendor && (
-          <Link
-            to="/ticket-scan"
-            className="px-4 py-2 flex items-center gap-2 hover:bg-sky-400 transition-all bg-sky-500 rounded-lg font-semibold"
-          >
-            <IoQrCode />
-            <p>Scan ticket</p>
+            Create Event
           </Link>
         )}
 
@@ -69,14 +59,15 @@ const Navbar = () => {
           isVendor ? (
             <Link
               to="/vendor"
-              className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
+              className="color-sky-500 flex items-center gap-2 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
             >
+              <MdEvent />
               Your events
             </Link>
           ) : (
             <Link
               to="/tickets"
-              className="color-sky-500 flex items-center gap-2 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg"
+              className="color-sky-500 flex items-center gap-2 font-semibold px-4 py-2 bg-sky-500 hover:bg-opacity-55 transition-all rounded-lg"
             >
               <BsTicketPerforatedFill />
               <p>Your tickets</p>

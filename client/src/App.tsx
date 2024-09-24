@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar";
 import SignUp from "./pages/SignUp";
 import CreateEvent from "./pages/CreateEvent";
 import UserTickets from "./pages/UserTickets";
-import TicketScanner from "./pages/TicketScanner";
 import { useInitializeWallet } from "./hooks/useInitializeWallet";
 import MascaStatus from "./components/ui/MascaStatus";
 import Home from "./pages/Home";
@@ -22,7 +21,6 @@ const App = () => {
         <Route path="/vendor" element={<Vendor />} />
         <Route path="/vendor/signup" element={<SignUp />} />
         <Route path="/vendor/create-event" element={<CreateEvent />} />
-        <Route path="/ticket-scan" element={<TicketScanner />} />
       </Routes>
     </div>
   );

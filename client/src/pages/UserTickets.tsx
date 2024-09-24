@@ -49,7 +49,7 @@ const UserTickets = () => {
         copyTickets.push({
           id: ticket.id,
           ticketId: ticket.ticketID,
-          isUsed: ticket.isUsed,
+          isUsed: verifyData.result.isUsed,
           event,
         });
       } catch (error) {

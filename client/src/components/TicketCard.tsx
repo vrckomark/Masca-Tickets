@@ -21,15 +21,8 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
     <div className="flex flex-col py-8 px-6 gap-6 rounded-lg bg-white bg-opacity-5 w-max">
       <h2 className="text-2xl text-sky-400 font-semibold">{event.name}</h2>
 
-      <div className="flex items-center gap-4">
-        <p>Tickets left </p>
-        <TextBox
-          label={`${event.availableTickets}`}
-          customStyle="font-medium py-2 text-sky-400"
-        />
-      </div>
       {event.location && (
-        <div className="flex ml-4 p-2 gap-4 items-center">
+        <div className="flex p-2 gap-4 items-center">
           <div className="text-sky-400">
             <FaLocationDot />
           </div>
