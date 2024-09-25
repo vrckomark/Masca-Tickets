@@ -23,6 +23,17 @@ const EventCard: React.FC<EventCardProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleBuyTicket = async () => {
+    setIsLoading(true);
+    try {
+      await buyTicket(event.id, event.vendor.wallet);
+    } catch (error) {
+      console.error("Error buying ticket:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col py-8 px-6 gap-6 rounded-lg bg-white bg-opacity-5 w-max">
       <h2 className="text-2xl text-sky-400 font-semibold">{event.name}</h2>
@@ -60,11 +71,7 @@ const EventCard: React.FC<EventCardProps> = ({
         {event.description}
       </pre>
       <button
-        onClick={() => {
-          setIsLoading(true);
-          buyTicket(event.id, event.vendor.wallet);
-          setIsLoading(false);
-        }}
+        onClick={handleBuyTicket}
         className="bg-sky-500 hover:bg-sky-400  text-white px-4 py-2 rounded-lg button-hover disabled:bg-white disabled:bg-opacity-50 font-medium"
         value={event.id}
         disabled={!walletData}
