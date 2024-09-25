@@ -23,7 +23,6 @@ const ShowQRcodeModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
 
   useEffect(() => {
     const newSocket = io("http://localhost:3000");
-    console.log('New client connected:', newSocket.id);
 
     newSocket.emit('joinEventRoom', generateSocketRoom());
 
@@ -59,19 +58,21 @@ const ShowQRcodeModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
       className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50"
       onClick={handleClickOutside}
     >
-      <div className="p-8 bg-slate-600 rounded-lg">
+      <div className="p-8 bg-sky-600 rounded-lg">
         <h2 className="text-2xl font-bold mb-4">Showing QRCode for {event}</h2>
 
-        {message ? (
-          <div className={`font-bold ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
-            {message}
-          </div>
-        ) : (
-          <QRCode value={JSON.stringify({eventID, room})} />
-        )}
+        <div className="flex justify-center items-center p-4 mb-4">
+          {message ? (
+            <div className={`font-bold ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
+              {message}
+            </div>
+          ) : (
+            <QRCode value={JSON.stringify({eventID, room})} />
+          )}
+        </div>
 
         <button
-          className="bg-red-500 text-white p-2 rounded-lg w-full hover:bg-red-600"
+          className="bg-red-500 text-white p-3 rounded-lg w-full hover:bg-red-600 font-bold"
           onClick={closeModal}
         >
           Close
