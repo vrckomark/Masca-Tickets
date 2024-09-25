@@ -21,19 +21,25 @@ export const verifyTicketHandler = async (req: Request, res: Response) => {
 
 export const useTicketHandler = async (req: Request, res: Response) => {
   try {
-    const { ticketID } = req.body;
+    const { ticketID, room } = req.body;
 
     if (!ticketID) {
       return res
         .status(400)
         .json({ result: false, message: "Ticket ID is required" });
+    } else if (!room) {
+      return res
+        .status(400)
+        .json({ result: false, message: "Room is required" });
     }
 
     const ticket = await useTicket(ticketID);
 
     console.log("QR scanned ticket: ", ticket.isUsed);
 
-    io.to("1234").emit('ticketValidated', {
+    console.log("Ticket will be used in room: ", room);
+
+    io.to(room).emit('ticketValidated', {
       success: true,
       message: 'Ticket has been successfully validated!',
       ticketID: ticket.id

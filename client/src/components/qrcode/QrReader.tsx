@@ -10,13 +10,18 @@ interface eventProps {
   ticketID: string;
 }
 
+interface ScannedResult {
+  eventID: string;
+  room: string;
+}
+
 const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
   const qrBoxEl = useRef<HTMLDivElement>(null);
   const [qrOn, setQrOn] = useState<boolean>(true);
 
-  const [scannedResult, setScannedResult] = useState<string | undefined>("");
+  const [scannedResult, setScannedResult] = useState<ScannedResult | null>(null);
   const [apiResult, setApiResult] = useState<boolean | null>(null);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [scanComplete, setScanComplete] = useState<boolean>(false);
@@ -31,22 +36,24 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     if (scanComplete) return;
 
-    const ScanedEventID = trimQuotes(result?.data);
-    console.log(ScanedEventID);
+    const scanedData = trimQuotes(result?.data);
+    const scanedDataParse = JSON.parse(scanedData);
 
     setScanComplete(true);
-    setScannedResult(ScanedEventID);
+    setScannedResult(scanedDataParse);
+    console.log('Scanned Result:', scanedDataParse);
+    console.log('Scanned Result:', scannedResult);
     setIsVerifying(true);
     setApiResult(null);
 
     scanner.current?.pause();
 
     try {
-      if (ScanedEventID !== eventID) {
-        throw new Error("Invalid ticket for this event.");
+      if (scanedDataParse?.eventID !== eventID) {
+        throw new Error(`Invalid ticket for this event. Event ID: ${scanedDataParse?.eventID} and Ticket ID: ${eventID}`);
       }
 
-      const apiResponse = await UseTicket(ticketID);
+      const apiResponse = await UseTicket(ticketID, scanedDataParse?.room);
 
       if (apiResponse.result) {
         setApiResult(true);
@@ -97,7 +104,7 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
   }, [qrOn]);
 
   const handleConfirm = () => {
-    setScannedResult("");
+    setScannedResult(null);
     setApiResult(null);
     setScanComplete(false);
     scanner?.current?.start();
@@ -141,7 +148,7 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
           </h2>
           {!isVerifying && 
             <>
-            <p>Scanned Result: {scannedResult}</p>
+            <p>Scanned Result: {JSON.stringify(scannedResult)}</p>
             <button onClick={handleConfirm}>Confirm</button>
             </>
           }

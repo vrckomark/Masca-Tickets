@@ -9,15 +9,23 @@ interface TicketModalProps {
 }
 
 const ShowQRcodeModal: React.FC<TicketModalProps> = ({ event, eventID, closeModal }) => {
-  const [socket, setSocket] = useState<any>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+  const [room, setRoom] = useState<string | null>(null);
+
+  function generateSocketRoom() {
+    const length = 10;
+    const generateSocketRoom = Math.random().toString(36).substring(2, 2 + length);
+    setRoom(generateSocketRoom);
+    console.log("Vendor created Room:", generateSocketRoom);
+    return generateSocketRoom;
+  }
 
   useEffect(() => {
     const newSocket = io("http://localhost:3000");
-    setSocket(newSocket);
+    console.log('New client connected:', newSocket.id);
 
-    newSocket.emit('joinEventRoom', "1234");
+    newSocket.emit('joinEventRoom', generateSocketRoom());
 
     newSocket.on('ticketValidated', (data: any) => {
       if (data.success) {
@@ -38,7 +46,7 @@ const ShowQRcodeModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
     return () => {
       newSocket.disconnect();
     };
-  }, [eventID]);
+  }, []);
 
   const handleClickOutside = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) {
@@ -59,7 +67,7 @@ const ShowQRcodeModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
             {message}
           </div>
         ) : (
-          <QRCode value={JSON.stringify({eventID})} />
+          <QRCode value={JSON.stringify({eventID, room})} />
         )}
 
         <button

@@ -1,11 +1,11 @@
-export const UseTicket = async (ticketID: string) => {
+export const UseTicket = async (ticketID: string, room: string) => {
   try {
     const res = await fetch("http://localhost:3000/api/useTicket", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ticketID }),
+      body: JSON.stringify({ ticketID, room }),
     });
 
     const data = await res.json();

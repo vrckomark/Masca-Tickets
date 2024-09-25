@@ -27,9 +27,9 @@ async function startServer() {
         console.log('Client disconnected:', socket.id);
       });
 
-      socket.on('joinEventRoom', (eventID) => {
-        socket.join(eventID);
-        console.log(`Vendor joined room for event ${eventID}`);
+      socket.on('joinEventRoom', (roomName) => {
+        socket.join(roomName);
+        console.log(`Vendor joined room ${roomName}`);
       });
     });
 

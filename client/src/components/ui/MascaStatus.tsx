@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { useAccount } from "wagmi";
 import { CircularProgress } from "@mui/material";
 import { useAppSelector } from "../../store/hooks";
