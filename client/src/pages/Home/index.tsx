@@ -77,9 +77,9 @@ const Home = () => {
   return (
     <div className="p-8 text-xl flex flex-col gap-12">
       <div className="flex flex-wrap gap-8">
-        {events.length && events.filter((event) => event.date > new Date()) ? (
+        {events.length && events.filter((event) => new Date(event.date) > new Date()) ? (
           events
-            .filter((event) => event.date > new Date())
+            .filter((event) => new Date(event.date)  > new Date())
             .map((event: EventType, index: number) => (
               <EventCard
                 key={index}

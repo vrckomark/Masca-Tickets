@@ -1,14 +1,20 @@
-import React from "react";
-import QRCode from "react-qr-code";
+import React, { useState} from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import TextBox from "../../components/TextBox";
 import { EventType } from "../../types/Event";
+import ShowQRcodeModal from "../../components/ShowQRcodeModal";
+import { IoQrCode } from "react-icons/io5";
 
 interface EventCardProps {
   event: EventType;
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="flex gap-8 p-6 rounded-lg items-center bg-white bg-opacity-5 w-max">
       <div className="flex flex-col  gap-6 w-max">
@@ -47,12 +53,27 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         >
           {event.description}
         </pre>
-      </div>
-      <div className="h-full w-2 rounded-xl bg-white bg-opacity-20" />
-      {event.id && (
-        <div className="p-6 h-max w-max bg-white rounded-lg flex ">
-          <QRCode value={JSON.stringify(event.id)} />
+        <div>
+          <button
+            onClick={openModal}
+            className="bg-sky-500 hover:bg-sky- p-4 hover:bg-sky-800  text-white py-4 rounded-lg button-hover disabled:bg-white disabled:bg-opacity-50  flex items-center gap-4 justify-center"
+            value={event.id}
+            disabled={new Date(event.date) < new Date()}
+            name="eventId"
+          >
+            <IoQrCode />
+            <p className="font-semibold">
+              Show QR Code
+            </p>
+          </button>
         </div>
+      </div>
+      {isModalOpen &&  (
+        <ShowQRcodeModal
+          event={event.name}
+          eventID={event.id}
+          closeModal={closeModal}
+        />
       )}
     </div>
   );
