@@ -17,7 +17,7 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
   const [qrOn, setQrOn] = useState<boolean>(true);
 
   const [scannedResult, setScannedResult] = useState<string | undefined>("");
-  const [apiResult, setApiResult] = useState<string | null>(null);
+  const [apiResult, setApiResult] = useState<boolean | null>(null);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [scanComplete, setScanComplete] = useState<boolean>(false);
 
@@ -28,11 +28,11 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
     return trimData;
   }
 
-  // Success
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     if (scanComplete) return;
 
     const ScanedEventID = trimQuotes(result?.data);
+    console.log(ScanedEventID);
 
     setScanComplete(true);
     setScannedResult(ScanedEventID);
@@ -47,14 +47,15 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
       }
 
       const apiResponse = await UseTicket(ticketID);
+
       if (apiResponse.result) {
-        setApiResult("Ticket is valid!");
+        setApiResult(true);
       } else {
-        setApiResult("Ticket is invalid or already used.");
+        setApiResult(false);
       }
     } catch (err) {
       console.error("Error verifying ticket:", err);
-      setApiResult("Error verifying ticket.");
+      setApiResult(false);
     } finally {
       setIsVerifying(false);
     }
@@ -116,19 +117,34 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
       </div>
 
       {scannedResult && (
-        <div className="popup-success">
+        <div
+          className={`popup ${
+            apiResult === true
+              ? "popup-success"
+              : apiResult === false
+              ? "popup-error"
+              : ""
+          }`}
+        >
           <h2 className="text-xl">
             {isVerifying ? (
-              <div className="flex items-center gap-2">
-                <CircularProgress size={20} color="inherit" /> Validating
-                ticket...
+              <div className="flex justify-center items-center gap-2">
+                <CircularProgress size={50} thickness={10} color="inherit" />
               </div>
+            ) : apiResult === false ? (
+              <span>Validation failed</span>
+            ) : apiResult === true ? (
+              <span>Validation succeeded</span>
             ) : (
-              apiResult || "Validation failed."
+              <span>Awaiting scan...</span>
             )}
           </h2>
-          <p>Scanned Result: {scannedResult}</p>
-          {!isVerifying && <button onClick={handleConfirm}>Confirm</button>}
+          {!isVerifying && 
+            <>
+            <p>Scanned Result: {scannedResult}</p>
+            <button onClick={handleConfirm}>Confirm</button>
+            </>
+          }
         </div>
       )}
     </div>

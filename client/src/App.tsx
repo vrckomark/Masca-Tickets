@@ -21,6 +21,7 @@ const App = () => {
         <Route path="/vendor" element={<Vendor />} />
         <Route path="/vendor/signup" element={<SignUp />} />
         <Route path="/vendor/create-event" element={<CreateEvent />} />
+        <Route path="/test" element={<h1>404 Not Found</h1>} />
       </Routes>
     </div>
   );
