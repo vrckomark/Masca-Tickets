@@ -4,10 +4,13 @@ import { CircularProgress } from "@mui/material";
 import { UseTicket } from "../../util/fetch/useTicket";
 import "./QrStyles.css";
 import QrFrame from "../../assets/qr-frame.svg";
+import SuccessAnimation from '../ui/successAnimation';
+import FailureAnimation from '../ui/FailureAnimation';
 
 interface eventProps {
   eventID: string;
   ticketID: string;
+  closeModal: () => void;
 }
 
 interface ScannedResult {
@@ -15,7 +18,7 @@ interface ScannedResult {
   room: string;
 }
 
-const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
+const QrReader: React.FC<eventProps> = ({ eventID, ticketID, closeModal }) => {
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
   const qrBoxEl = useRef<HTMLDivElement>(null);
@@ -57,6 +60,10 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
 
       if (apiResponse.result) {
         setApiResult(true);
+
+        setTimeout(() => {
+          closeModal();
+        }, 3000);
       } else {
         setApiResult(false);
       }
@@ -133,25 +140,18 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
               : ""
           }`}
         >
-          <h2 className="text-xl">
+          <div className="flex justify-center items-center gap-2">
             {isVerifying ? (
-              <div className="flex justify-center items-center gap-2">
-                <CircularProgress size={50} thickness={10} color="inherit" />
-              </div>
+              <CircularProgress size={50} thickness={10} color="inherit" />
             ) : apiResult === false ? (
-              <span>Validation failed</span>
+              <FailureAnimation />
             ) : apiResult === true ? (
-              <span>Validation succeeded</span>
+              <SuccessAnimation />
             ) : (
-              <span>Awaiting scan...</span>
+              <span className="text-lg">Awaiting scan...</span>
             )}
-          </h2>
-          {!isVerifying && 
-            <>
-            <p>Scanned Result: {JSON.stringify(scannedResult)}</p>
-            <button onClick={handleConfirm}>Confirm</button>
-            </>
-          }
+          </div>
+          {!isVerifying && ( <button onClick={handleConfirm}>Confirm</button> )}
         </div>
       )}
     </div>

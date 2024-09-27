@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
-import { io } from 'socket.io-client'; // Import Socket.io client
+import { io } from 'socket.io-client';
+import SuccessAnimation from './ui/successAnimation';
+import FailureAnimation from './ui/FailureAnimation';
 
 interface TicketModalProps {
   event: string;
@@ -17,14 +19,20 @@ const ShowQRcodeModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
     const length = 10;
     const generateSocketRoom = Math.random().toString(36).substring(2, 2 + length);
     setRoom(generateSocketRoom);
-    console.log("Vendor created Room:", generateSocketRoom);
     return generateSocketRoom;
   }
 
   useEffect(() => {
     const newSocket = io("http://localhost:3000");
 
-    newSocket.emit('joinEventRoom', generateSocketRoom());
+    const createAndJoinRoom = (room: string) => {
+      setRoom(room);
+      newSocket.emit("joinEventRoom", room);
+      console.log(`Joined room: ${room}`);
+    };
+
+    const initialRoom = generateSocketRoom();
+    createAndJoinRoom(initialRoom);
 
     newSocket.on('ticketValidated', (data: any) => {
       if (data.success) {
@@ -35,11 +43,13 @@ const ShowQRcodeModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
         setMessage(data.message);
       }
 
-      // Clear message after 2.5 seconds
+      const newRoom = generateSocketRoom();
+      createAndJoinRoom(newRoom);
+
       setTimeout(() => {
         setMessage(null);
         setIsSuccess(null);
-      }, 2500);
+      }, 3000);
     });
 
     return () => {
@@ -63,11 +73,14 @@ const ShowQRcodeModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
 
         <div className="flex justify-center items-center p-4 mb-4">
           {message ? (
-            <div className={`font-bold ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
-              {message}
+            <div className="flex flex-col items-center">
+              {isSuccess ? <SuccessAnimation /> : <FailureAnimation />}
+              <div className={`font-bold ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
+                {message}
+              </div>
             </div>
           ) : (
-            <QRCode value={JSON.stringify({eventID, room})} />
+            <QRCode value={JSON.stringify({ eventID, room })} />
           )}
         </div>
 

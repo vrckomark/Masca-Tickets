@@ -20,8 +20,8 @@ export const verifyTicketHandler = async (req: Request, res: Response) => {
 };
 
 export const useTicketHandler = async (req: Request, res: Response) => {
+  const { ticketID, room } = req.body;
   try {
-    const { ticketID, room } = req.body;
 
     if (!ticketID) {
       return res
@@ -47,7 +47,7 @@ export const useTicketHandler = async (req: Request, res: Response) => {
 
     return res.status(200).json({ result: true, ticket });
   } catch (error) {
-    io.to("1234").emit('ticketValidated', {
+    io.to(room).emit('ticketValidated', {
       success: false,  // This indicates failure
       message: error.message, // Pass the error message to the vendor
     });

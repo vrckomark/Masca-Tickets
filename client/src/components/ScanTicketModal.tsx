@@ -24,6 +24,7 @@ const ScanTicketModal: React.FC<TicketModalProps> = ({ event, eventID, closeModa
         <QrReader 
             eventID={eventID}
             ticketID={ticketID}
+            closeModal={closeModal}
         />
 
         <button
