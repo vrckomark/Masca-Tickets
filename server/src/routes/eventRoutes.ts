@@ -1,10 +1,16 @@
-import { Router } from 'express';
-import { createEventHandler, getAllEventsHandler, getEventsByVendorHandler } from '../controllers/eventController';
+import { Router } from "express";
+import {
+  createEventHandler,
+  getAllEventsHandler,
+  getEventsByVendorHandler,
+  getEventHandler,
+} from "../controllers/eventController";
 
 const router = Router();
 
-router.post('/event', createEventHandler);
-router.get('/events', getAllEventsHandler);
-router.get('/getEventsByVendor/:vendorWallet', getEventsByVendorHandler);
+router.get("/event/:id", getEventHandler);
+router.post("/event", createEventHandler);
+router.get("/events", getAllEventsHandler);
+router.get("/getEventsByVendor/:vendorWallet", getEventsByVendorHandler);
 
 export default router;

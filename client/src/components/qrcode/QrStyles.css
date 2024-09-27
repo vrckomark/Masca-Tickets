@@ -24,13 +24,13 @@
   transform: translateX(-50%) translateY(-50%);
 }
 
-.popup-success {
+.popup {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-  background-color: #28a745; /* Green background */
+  background-color: #1a1a1a;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
@@ -44,15 +44,23 @@
   border-radius: 2rem;
 }
 
-.popup-success h2 {
+.popup-error {
+  background-color: #dc3545;
+}
+
+.popup-success {
+  background-color: #28a745;
+}
+
+.popup h2 {
   margin-top: 0;
 }
 
-.popup-success button {
+.popup button {
   margin-top: 15px;
   padding: 10px 20px;
   background-color: white;
-  color: #28a745;
+  color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;

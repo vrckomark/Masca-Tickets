@@ -1,24 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
+import QrScanner from "qr-scanner";
 import { CircularProgress } from "@mui/material";
 import { UseTicket } from "../../util/fetch/useTicket";
 import "./QrStyles.css";
-
-import QrScanner from "qr-scanner";
 import QrFrame from "../../assets/qr-frame.svg";
+import SuccessAnimation from '../ui/successAnimation';
+import FailureAnimation from '../ui/FailureAnimation';
 
 interface eventProps {
   eventID: string;
   ticketID: string;
+  closeModal: () => void;
 }
 
-const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
+interface ScannedResult {
+  eventID: string;
+  room: string;
+}
+
+const QrReader: React.FC<eventProps> = ({ eventID, ticketID, closeModal }) => {
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
   const qrBoxEl = useRef<HTMLDivElement>(null);
   const [qrOn, setQrOn] = useState<boolean>(true);
 
-  const [scannedResult, setScannedResult] = useState<string | undefined>("");
-  const [apiResult, setApiResult] = useState<string | null>(null);
+  const [scannedResult, setScannedResult] = useState<ScannedResult | null>(null);
+  const [apiResult, setApiResult] = useState<boolean | null>(null);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [scanComplete, setScanComplete] = useState<boolean>(false);
 
@@ -29,33 +36,40 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
     return trimData;
   }
 
-  // Success
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     if (scanComplete) return;
 
-    const ScanedEventID = trimQuotes(result?.data);
+    const scanedData = trimQuotes(result?.data);
+    const scanedDataParse = JSON.parse(scanedData);
 
     setScanComplete(true);
-    setScannedResult(ScanedEventID);
+    setScannedResult(scanedDataParse);
+    console.log('Scanned Result:', scanedDataParse);
+    console.log('Scanned Result:', scannedResult);
     setIsVerifying(true);
     setApiResult(null);
 
     scanner.current?.pause();
 
     try {
-      if (ScanedEventID !== eventID) {
-        throw new Error("Invalid ticket for this event.");
+      if (scanedDataParse?.eventID !== eventID) {
+        throw new Error(`Invalid ticket for this event. Event ID: ${scanedDataParse?.eventID} and Ticket ID: ${eventID}`);
       }
 
-      const apiResponse = await UseTicket(ticketID);
+      const apiResponse = await UseTicket(ticketID, scanedDataParse?.room);
+
       if (apiResponse.result) {
-        setApiResult("Ticket is valid!");
+        setApiResult(true);
+
+        setTimeout(() => {
+          closeModal();
+        }, 3000);
       } else {
-        setApiResult("Ticket is invalid or already used.");
+        setApiResult(false);
       }
     } catch (err) {
       console.error("Error verifying ticket:", err);
-      setApiResult("Error verifying ticket.");
+      setApiResult(false);
     } finally {
       setIsVerifying(false);
     }
@@ -97,7 +111,7 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
   }, [qrOn]);
 
   const handleConfirm = () => {
-    setScannedResult("");
+    setScannedResult(null);
     setApiResult(null);
     setScanComplete(false);
     scanner?.current?.start();
@@ -117,19 +131,27 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID }) => {
       </div>
 
       {scannedResult && (
-        <div className="popup-success">
-          <h2 className="text-xl">
+        <div
+          className={`popup ${
+            apiResult === true
+              ? "popup-success"
+              : apiResult === false
+              ? "popup-error"
+              : ""
+          }`}
+        >
+          <div className="flex justify-center items-center gap-2">
             {isVerifying ? (
-              <div className="flex items-center gap-2">
-                <CircularProgress size={20} color="inherit" /> Validating
-                ticket...
-              </div>
+              <CircularProgress size={50} thickness={10} color="inherit" />
+            ) : apiResult === false ? (
+              <FailureAnimation />
+            ) : apiResult === true ? (
+              <SuccessAnimation />
             ) : (
-              apiResult || "Validation failed."
+              <span className="text-lg">Awaiting scan...</span>
             )}
-          </h2>
-          <p>Scanned Result: {scannedResult}</p>
-          {!isVerifying && <button onClick={handleConfirm}>Confirm</button>}
+          </div>
+          {!isVerifying && ( <button onClick={handleConfirm}>Confirm</button> )}
         </div>
       )}
     </div>

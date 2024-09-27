@@ -1,4 +1,3 @@
-import { MascaApi } from "@blockchain-lab-um/masca-types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TicketType } from "../types/Ticket";
 

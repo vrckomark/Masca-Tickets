@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import ScanTicketModal from "../components/ScanTicketModal";
 import { TicketType } from "../types/Ticket";
+import TextBox from "./TextBox";
+import { FaLocationDot } from "react-icons/fa6";
+import { IoQrCode } from "react-icons/io5";
 
 interface TicketCardProps {
   ticket: TicketType;
@@ -12,47 +15,56 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  return (
-    <div className="flex flex-col items-start gap-4 bg-white bg-opacity-10 rounded-lg p-6 w-max my-8">
-      <div className="flex flex-col gap-4">
-        <h2 className="font-medium text-2xl text-sky-400 mb-4">
-          {ticket.type}
-        </h2>
+  const event = ticket.event;
 
-        <div className="flex gap-4 items-center">
-          <p className="w-1/5">ID</p>
-          <div className="p-2 tracking-wide rounded-lg bg-white bg-opacity-5">
-            {ticket.ticketID}
+  return (
+    <div className="flex flex-col py-8 px-6 gap-6 rounded-lg bg-white bg-opacity-5 w-max">
+      <h2 className="text-2xl text-sky-400 font-semibold">{event.name}</h2>
+
+      {event.location && (
+        <div className="flex p-2 gap-4 items-center">
+          <div className="text-sky-400">
+            <FaLocationDot />
           </div>
+
+          <p>{event.location}</p>
         </div>
-        <div className="flex gap-4 items-center">
-          <p className="w-1/5">Date</p>
-          <div className="p-2 rounded-lg bg-white bg-opacity-5">
-            {new Date(ticket.eventDate).toLocaleString()}
-          </div>
+      )}
+      {event.date && (
+        <div className="flex gap-4">
+          <TextBox label={new Date(event.date).toDateString()} />
+          <TextBox
+            label={`${new Date(event.date).getHours()}:${
+              new Date(event.date).getMinutes() == 0 ? "00" : new Date(event.date).getMinutes()
+            }`}
+          />
         </div>
-        <div className="flex gap-4 items-center">
-          <p className="w-1/5">Location</p>
-          <div className="p-2 rounded-lg bg-white bg-opacity-5">
-            {ticket.eventLocation}
-          </div>
-        </div>
-        <div>
-          <button
-            className="bg-sky-400 text-white rounded-lg p-2 w-full hover:shadow-lg hover:bg-sky-500"
-            onClick={openModal}
-          >
-            Scan Ticket
-          </button>
-        </div>
-      </div>
+      )}
+      <pre
+        style={{ fontFamily: "Inter Tight , system-ui" }}
+        className="text-lg opacity-60 bg-white bg-opacity-5 rounded-lg p-4"
+      >
+        {event.description}
+      </pre>
+      <button
+        onClick={openModal}
+        className="bg-sky-500 hover:bg-sky-400  text-white py-4 rounded-lg button-hover disabled:bg-white disabled:bg-opacity-50  flex items-center gap-4 justify-center"
+        value={event.id}
+        disabled={ticket.isUsed}
+        name="eventId"
+      >
+        <IoQrCode />
+        <p className="font-semibold">
+          {ticket.isUsed ? "Ticket Scanned" : "Scan Ticket"}
+        </p>
+      </button>
 
       {isModalOpen && (
         <ScanTicketModal
-          event={ticket.type}
-          eventID={ticket.eventID}
+          event={event.name}
+          eventID={event.id}
           closeModal={closeModal}
-          ticketID={ticket.ticketID}
+          ticketID={ticket.ticketId}
         />
       )}
     </div>
