@@ -10,21 +10,24 @@ interface MascaApiProviderProps {
 }
 interface MascaContextType {
   mascaApi: MascaApi | null;
+  isLoading: boolean;
 }
 
 export const MascaContext = createContext<MascaContextType>({
   mascaApi: null,
+  isLoading: false,
 });
 
 const MascaApiProvider: React.FC<MascaApiProviderProps> = ({ children }) => {
   const [mascaApi, setMascaApi] = useState<MascaApi | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { isConnected, address } = useAccount();
   const [isMascaInitialized, setIsMascaInitialized] = useState(false);
   const dispatch = useAppDispatch();
 
   const initializeMasca = async () => {
     if (!address || !isConnected || isMascaInitialized) return;
-
+    setIsLoading(true);
     const enableResult = await enableMasca(address, {
       snapId: "npm:@blockchain-lab-um/masca",
       version: "1.2.2",
@@ -37,7 +40,6 @@ const MascaApiProvider: React.FC<MascaApiProviderProps> = ({ children }) => {
 
     const api = enableResult.data.getMascaApi();
     setMascaApi(api);
-
     await api.switchDIDMethod("did:key");
 
     const did = await api.getDID();
@@ -46,7 +48,7 @@ const MascaApiProvider: React.FC<MascaApiProviderProps> = ({ children }) => {
     } else {
       dispatch(setCurrentDID(did.data));
     }
-
+    setIsLoading(false);
     setIsMascaInitialized(true);
   };
 
@@ -57,10 +59,10 @@ const MascaApiProvider: React.FC<MascaApiProviderProps> = ({ children }) => {
       dispatch(setCurrentDID(null));
       setIsMascaInitialized(false);
     }
-  }, [isConnected, address, initializeMasca]);
+  }, [isConnected, address]);
 
   return (
-    <MascaContext.Provider value={{ mascaApi }}>
+    <MascaContext.Provider value={{ mascaApi, isLoading }}>
       {children}
     </MascaContext.Provider>
   );

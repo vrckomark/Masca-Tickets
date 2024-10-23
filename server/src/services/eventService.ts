@@ -1,4 +1,4 @@
-import { Vendor, Event } from '../db/types';
+import { Vendor, Event } from "../db/types";
 
 export const createEvent = async (
   wallet: string,
@@ -12,7 +12,7 @@ export const createEvent = async (
     const vendor = await Vendor.findOneBy({ wallet });
 
     if (!vendor) {
-      throw new Error('Vendor not found');
+      throw new Error("Vendor not found");
     }
 
     const event = Event.create({
@@ -28,16 +28,16 @@ export const createEvent = async (
 
     return event;
   } catch (error) {
-    throw new Error('Error creating event: ' + error.message);
+    throw new Error("Error creating event: " + error.message);
   }
 };
 
 export const getAllEvents = async () => {
   try {
-    const events = await Event.find({ relations: ['vendor'] });
+    const events = await Event.find({ relations: ["vendor"] });
     return events;
   } catch (error) {
-    throw new Error('Error fetching events: ' + error.message);
+    throw new Error("Error fetching events: " + error.message);
   }
 };
 
@@ -45,10 +45,19 @@ export const getEventsByVendor = async (vendorWallet: string) => {
   try {
     const events = await Event.find({
       where: { vendor: { wallet: vendorWallet } },
-      relations: ['vendor'],
+      relations: ["vendor"],
     });
     return events;
   } catch (error) {
-    throw new Error('Error fetching events: ' + error.message);
+    throw new Error("Error fetching events: " + error.message);
+  }
+};
+
+export const getEventById = async (id: string) => {
+  try {
+    const event = await Event.findOneBy({ id });
+    return event;
+  } catch (error) {
+    throw new Error("Error fetching events: " + error.message);
   }
 };

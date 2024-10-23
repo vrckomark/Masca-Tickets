@@ -27,7 +27,7 @@ export const getVendorHandler = async (req: Request, res: Response) => {
       return res.status(200).json({ exists: true });
     }
 
-    return res.status(404).json({ exists: false });
+    return res.status(200).json({ exists: false });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

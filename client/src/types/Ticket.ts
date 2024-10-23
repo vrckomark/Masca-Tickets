@@ -1,3 +1,5 @@
+import { EventType } from "./Event";
+
 export type TicketReturnType = {
   eventDate: string;
   eventID: string;
@@ -9,13 +11,16 @@ export type TicketReturnType = {
   type: string;
 };
 
-export type TicketType = TicketReturnType & {
+export type TicketType = {
+  id: string;
+  event: EventType;
+  ticketId: string;
   isUsed: boolean;
 };
 
-export type TicketVCType = {
+export type CredentialType = {
   "@context": string[];
-  credentialSubject: TicketType;
+  credentialSubject: TicketReturnType;
   issuanceDate: string;
   issuer: {
     id: string;
