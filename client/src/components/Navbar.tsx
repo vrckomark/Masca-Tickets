@@ -25,12 +25,6 @@ const Navbar = () => {
         <Link to="/" className="font-bold text-3xl text-sky-400 p-4">
           Masca Events
         </Link>
-        {/* Display vendor link only if the user is connected and is a vendor */}
-        {isVendor && isConnected && (
-          <Link to="/vendor" className="color-sky-500 font-semibold px-4 py-2 bg-white bg-opacity-5 hover:bg-opacity-10 transition-all rounded-lg">
-            Dashboard
-          </Link>
-        )}
 
         {/* Show "Sign Up as Vendor" only if user is not connected */}
         {!isSignUpPage && !isVendor && isConnected && (
