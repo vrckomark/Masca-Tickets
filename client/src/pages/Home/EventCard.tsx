@@ -27,8 +27,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, walletData }) => {
       const payload = {
         credential_type: ["VerifiableCredential", "EventTicketCredential"],
         credential_subject: {
-          eventId: "1234567890",
-          eventName: "testing",
+          eventId: event.id,
+          eventName: event.name,
         },
       };
 
