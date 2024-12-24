@@ -5,11 +5,9 @@
 @tailwind utilities;
 
 :root {
-  background-color: #222;
-  color: white;
+  background-color: #fdf3ec;
+  color: #1c1c1c;
   font-family: "Inter Tight", system-ui;
-
-  font-weight: 400;
 }
 
 body {

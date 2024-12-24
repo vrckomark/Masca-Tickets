@@ -19,7 +19,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
 
   return (
     <div className="flex flex-col py-8 px-6 gap-6 rounded-lg bg-white bg-opacity-5 w-max">
-      <h2 className="text-2xl text-sky-400 font-semibold">{event.name}</h2>
+      <h2 className="text-2xl text-primary font-semibold">{event.name}</h2>
 
       {event.location && (
         <div className="flex p-2 gap-4 items-center">
@@ -35,7 +35,9 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
           <TextBox label={new Date(event.date).toDateString()} />
           <TextBox
             label={`${new Date(event.date).getHours()}:${
-              new Date(event.date).getMinutes() == 0 ? "00" : new Date(event.date).getMinutes()
+              new Date(event.date).getMinutes() == 0
+                ? "00"
+                : new Date(event.date).getMinutes()
             }`}
           />
         </div>
