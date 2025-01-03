@@ -6,6 +6,7 @@ import { useAppSelector } from "../store/hooks";
 import { selectUser } from "../store/userSlice";
 import { useContext } from "react";
 import { MascaContext } from "./providers/MascaApiProvider";
+import { FaUserTie } from "react-icons/fa6";
 
 const Navbar = () => {
   const { isConnected } = useAccount();
@@ -67,7 +68,12 @@ const Navbar = () => {
         null}
 
         {/* Rainbowkit Connect Button */}
-        {!isSignUpPage && <ConnectButton />}
+        <div className="flex gap-4 items-center">
+          {!isSignUpPage && <ConnectButton />}
+          {!isSignUpPage && isVendor && isConnected && (
+            <FaUserTie className="text-3xl" />
+          )}
+        </div>
       </div>
     </div>
   );

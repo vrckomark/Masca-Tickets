@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { addVendor } from "../util/fetch/addVendor";
+import { FaUserTie } from "react-icons/fa6";
 
 const SignUp = () => {
   const [companyName, setCompanyName] = useState<string>("");
@@ -25,12 +26,14 @@ const SignUp = () => {
 
   return (
     <div className="p-12 flex flex-col w-full items-center gap-8">
-      <h1 className="font-semibold text-3xl mb-8">
+      <FaUserTie className="text-[72px] text-primary" />
+
+      <h1 className="font-semibold text-3xl mb-6">
         Sign up to become a ticket vendor.
       </h1>
       <form onSubmit={handleSubmit} className="flex-col flex w-1/3 gap-8">
         <input
-          className="text-white transition-all hover:bg-opacity-10 focus:bg-opacity-10 outline-none border-2 border-white border-opacity-0 hover:border-opacity-20 duration-150 font-medium bg-white bg-opacity-[0.07] w-full p-4 rounded-lg"
+          className="text-black text-lg transition-all outline-none border-opacity-0 placeholder:text-stone-700 hover:border-opacity-20 duration-150 font-medium bg-primary bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 w-full p-4 rounded-lg"
           type="text"
           value={companyName}
           placeholder="Enter your vendor name"
@@ -47,7 +50,7 @@ const SignUp = () => {
           <input
             type="submit"
             disabled={!companyName || !isConnected}
-            className=" bg-sky-500 disabled:bg-stone-500 disabled:cursor-default bg-opacity-90 hover:bg-opacity-100 transition-all p-4 font-medium text-xl rounded-lg cursor-pointer"
+            className=" bg-primary  disabled:bg-stone-500 disabled:text-stone-200 disabled:cursor-default bg-opacity-90 hover:bg-opacity-100 transition-all px-6 py-3 font-bold text-white text-xl rounded-lg cursor-pointer"
           />
         </div>
         {status && (
