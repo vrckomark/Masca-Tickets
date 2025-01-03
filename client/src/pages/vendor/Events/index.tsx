@@ -1,21 +1,9 @@
-import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
-import { EventType } from "../../types/Event";
-import { getEventsByVendor } from "../../util/fetch/getEventsByVendor";
-import EventCard from "./EventCard";
+import { EventType } from "../../../types/Event";
+import EventCard from "../EventCard";
+import { useVendorEvents } from "../hooks/useVendorEvents";
 
 const Vendor = () => {
-  const [events, setEvents] = useState<EventType[]>([]);
-  const { address } = useAccount();
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      if (!address) return;
-      const data = await getEventsByVendor(address);
-      setEvents(data);
-    };
-    fetchEvents();
-  }, []);
+  const { events } = useVendorEvents();
 
   return (
     <div className="p-8 text-xl flex flex-col gap-12">

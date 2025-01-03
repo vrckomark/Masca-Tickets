@@ -1,29 +1,9 @@
-import React, { FormEvent, useState } from "react";
-import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { addVendor } from "../util/fetch/addVendor";
 import { FaUserTie } from "react-icons/fa6";
+import { useSignUp } from "./useSignUp";
 
 const SignUp = () => {
-  const [companyName, setCompanyName] = useState<string>("");
-  const { isConnected, address } = useAccount();
-  const [status, setStatus] = useState<{
-    message: string;
-    status: number;
-    isError: boolean;
-  } | null>(null);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!companyName || !isConnected || !address) return;
-    const status = await addVendor(companyName, address);
-    setStatus(status);
-  };
-
-  const onCompanyNameChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setCompanyName(e.currentTarget.value);
-  };
-
+  const { handleSubmit, companyName, isConnected, status } = useSignUp();
   return (
     <div className="p-12 flex flex-col w-full items-center gap-8">
       <FaUserTie className="text-[72px] text-primary" />
@@ -35,9 +15,9 @@ const SignUp = () => {
         <input
           className="text-black text-lg transition-all outline-none border-opacity-0 placeholder:text-stone-700 hover:border-opacity-20 duration-150 font-medium bg-primary bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 w-full p-4 rounded-lg"
           type="text"
-          value={companyName}
+          value={companyName.value}
           placeholder="Enter your vendor name"
-          onChange={onCompanyNameChange}
+          onChange={companyName.onChange}
         />
         <div className="flex justify-between w-full items-end">
           <div className="flex flex-col gap-2">
@@ -49,7 +29,7 @@ const SignUp = () => {
 
           <input
             type="submit"
-            disabled={!companyName || !isConnected}
+            disabled={!companyName.value || !isConnected}
             className=" bg-primary  disabled:bg-stone-500 disabled:text-stone-200 disabled:cursor-default bg-opacity-90 hover:bg-opacity-100 transition-all px-6 py-3 font-bold text-white text-xl rounded-lg cursor-pointer"
           />
         </div>
