@@ -90,30 +90,33 @@ const CreateEvent = () => {
     <div className="p-12 flex flex-col w-full items-center gap-8">
       <h1 className="font-semibold text-3xl mb-8">Create a new event</h1>
       <form onSubmit={handleSubmit} className="flex-col flex w-1/3 gap-8">
-        <input
-          className="text-white transition-all hover:bg-opacity-10 focus:bg-opacity-10 outline-none  border-opacity-0   font-medium bg-white bg-opacity-[0.07] w-full p-4 rounded-lg text-xl"
-          type="text"
-          value={eventName}
-          placeholder="Enter event name"
-          onChange={onEventNameChange}
-        />
         <div className="flex flex-col gap-2">
-          <p className="font-medium text-lg">Description</p>
+          <p className="font-semibold text-lg">Name</p>
+          <input
+            className="text-black transition-all outline-none  border-opacity-0 font-medium bg-primary hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 bg-opacity-15 w-full p-4 rounded-lg text-xl"
+            type="text"
+            value={eventName}
+            placeholder="Enter event name"
+            onChange={onEventNameChange}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <p className="font-semibold text-lg">Description</p>
           <textarea
             value={description}
             onChange={onDescriptionChange}
             placeholder="Describe your event"
-            className="p-4 bg-white bg-opacity-5 font-medium text-xl rounded-lg hover:bg-opacity-10 outline-none focus:bg-opacity-10"
+            className="p-4 bg-primary bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 font-medium text-xl rounded-lg outline-none"
           />
         </div>
         <div className="flex flex-col w-full gap-2">
-          <p className="font-medium text-lg">Date</p>
+          <p className="font-semibold text-lg">Date</p>
           <div className="flex w-full">
             <input
               value={dateTime.day}
               placeholder="dd"
               type="number"
-              className="bg-white bg-opacity-5 p-4 text-xl w-24 flex border-r-2 border-sky-500 rounded-l-lg hover:bg-opacity-10 outline-none focus:bg-opacity-10"
+              className="bg-secondary font-semibold bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 p-4 text-xl w-24 flex border-r-2 border-sky-500 rounded-l-lg outline-none"
               onChange={onDateTimeChange}
               name="day"
             />
@@ -121,7 +124,7 @@ const CreateEvent = () => {
               value={dateTime.month}
               placeholder="mm"
               type="number"
-              className="bg-white bg-opacity-5 p-4 text-xl flex w-24 border-r-2 border-sky-500 hover:bg-opacity-10 outline-none focus:bg-opacity-10"
+              className="bg-secondary font-semibold bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 p-4 text-xl flex w-24 border-r-2 border-sky-500 outline-none"
               onChange={onDateTimeChange}
               name="month"
             />
@@ -129,20 +132,20 @@ const CreateEvent = () => {
               value={dateTime.year}
               placeholder="yyyy"
               type="number"
-              className="bg-white bg-opacity-5 p-4 text-xl w-24 flex rounded-r-lg hover:bg-opacity-10 outline-none focus:bg-opacity-10"
+              className="bg-secondary font-semibold bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 p-4 text-xl w-24 flex rounded-r-lg outline-none"
               onChange={onDateTimeChange}
               name="year"
             />
           </div>
         </div>
         <div className="flex flex-col w-full gap-2">
-          <p className="font-medium text-lg">Time</p>
+          <p className="font-semibold text-lg">Time</p>
           <div className="flex w-full">
             <input
               value={dateTime.hour}
               placeholder="dd"
               type="number"
-              className="bg-white bg-opacity-5 p-4 text-xl w-24 flex border-r-2 border-sky-500 rounded-l-lg hover:bg-opacity-10 outline-none focus:bg-opacity-10"
+              className="bg-secondary font-semibold bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 p-4 text-xl w-24 flex border-r-2 border-sky-500 rounded-l-lg outline-none"
               onChange={onDateTimeChange}
               name="hour"
             />
@@ -150,37 +153,37 @@ const CreateEvent = () => {
               value={dateTime.minute}
               placeholder="mm"
               type="number"
-              className="bg-white bg-opacity-5 p-4 text-xl flex w-24 rounded-r-lg hover:bg-opacity-10 outline-none focus:bg-opacity-10"
+              className="bg-secondary font-semibold bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 p-4 text-xl flex w-24 rounded-r-lg outline-none"
               onChange={onDateTimeChange}
               name="minute"
             />
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <p className="font-medium text-lg">Location</p>
+          <p className="font-semibold text-lg">Location</p>
           <input
             type="text"
             value={location}
             onChange={onLocationChange}
             placeholder="Set a location"
-            className="p-4 bg-white bg-opacity-5 font-medium text-xl rounded-lg outline-none hover:bg-opacity-10 focus:bg-opacity-10"
+            className="p-4 bg-primary font-medium bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 text-xl rounded-lg outline-none"
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <p className="font-medium text-lg">Total tickets</p>
+        <div className="flex w-full items-center flex-col gap-2">
+          <p className="font-semibold text-lg">Total tickets</p>
           <input
             type="number"
             value={totalTickets}
             onChange={onTotalTicketsChange}
             placeholder="Total tickets"
-            className="p-4 bg-white bg-opacity-5 font-medium text-xl rounded-lg hover:bg-opacity-10 outline-none focus:bg-opacity-10"
+            className="p-4 bg-primary text-center w-1/2 font-semibold bg-opacity-15 hover:bg-opacity-20 focus:bg-opacity-20 placeholder:text-stone-900 text-xl rounded-lg outline-none"
           />
         </div>
 
         <input
           type="submit"
-          value="Create event"
-          className="bg-sky-500 font-semibold p-4 rounded-lg w-full text-xl cursor-pointer hover:bg-sky-400 transition-all"
+          value="Create Event"
+          className="bg-primary text-white font-bold p-4 rounded-lg w-full text-xl cursor-pointer hover:bg-opacity-90 transition-all"
         />
       </form>
     </div>

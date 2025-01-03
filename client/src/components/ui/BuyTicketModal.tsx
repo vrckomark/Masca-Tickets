@@ -12,9 +12,9 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ pin, qrLocation }) => {
     <Modal>
       <div className="flex flex-col gap-6 my-10">
         <div className="flex flex-col items-center">
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-6 items-center">
             <h1 className="text-3xl text-gray-900 font-bold">PIN:</h1>
-            <p className="text-3xl font-bold tracking-widest text-black">
+            <p className="text-3xl bg-white p-4 rounded-xl shadow-md font-bold tracking-widest text-black">
               {pin}
             </p>
           </div>

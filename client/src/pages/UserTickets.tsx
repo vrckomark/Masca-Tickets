@@ -61,8 +61,13 @@ const UserTickets = () => {
     return copyTickets;
   };
 
-const fetchVCs = async (forceRefresh = false) => {
-    if (!mascaApi || !currentDID || !address || (!forceRefresh && tickets.length > 0)) {
+  const fetchVCs = async (forceRefresh = false) => {
+    if (
+      !mascaApi ||
+      !currentDID ||
+      !address ||
+      (!forceRefresh && tickets.length > 0)
+    ) {
       console.log("No mascaApi, currentDID, address, or tickets");
       console.log("mascaApi:", mascaApi);
       console.log("currentDID:", currentDID);
@@ -106,20 +111,24 @@ const fetchVCs = async (forceRefresh = false) => {
   return (
     <div className="p-8 text-xl">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">My Tickets</h2>
+        <h2 className="text-3xl font-bold">My Tickets</h2>
         <button
-          className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600"
+          className="bg-secondary flex justify-center items-center text-[#fee9dd] px-4 py-2  font-semibold rounded-lg hover:bg-opacity-90 transition-all"
           onClick={handleRefresh}
           disabled={isLoading || verifying}
         >
-          {isLoading || verifying ? <CircularProgress size={20} color="inherit" /> : "Refresh"}
+          {isLoading || verifying ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : (
+            "Refresh"
+          )}
         </button>
       </div>
 
       {isLoading || (verifying && !tickets.length) ? (
         <CircularProgress size={20} color="inherit" />
       ) : !tickets.length ? (
-        <p>No valid credentials found.</p>
+        <p className="font-medium">No valid credentials found.</p>
       ) : (
         <>
           <h2 className="mb-4 text-2xl font-semibold">Unused Tickets</h2>

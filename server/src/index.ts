@@ -1,7 +1,7 @@
-import app from './app';
-import { dbConnection } from './db/config';
-import { Server as SocketIOServer } from 'socket.io';
-import { createServer } from 'http';
+import app from "./app";
+import { dbConnection } from "./db/config";
+import { Server as SocketIOServer } from "socket.io";
+import { createServer } from "http";
 
 const PORT = process.env.PORT || 3000;
 
@@ -10,7 +10,7 @@ let io: SocketIOServer;
 async function startServer() {
   try {
     await dbConnection;
-    console.log('Connected to the database');
+    console.log("Connected to the database");
 
     const server = createServer(app);
     io = new SocketIOServer(server, {
@@ -20,14 +20,14 @@ async function startServer() {
       },
     });
 
-    io.on('connection', (socket) => {
-      console.log('New client connected:', socket.id);
+    io.on("connection", (socket) => {
+      console.log("New client connected:", socket.id);
 
-      socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
+      socket.on("disconnect", () => {
+        console.log("Client disconnected:", socket.id);
       });
 
-      socket.on('joinEventRoom', (roomName) => {
+      socket.on("joinEventRoom", (roomName) => {
         socket.join(roomName);
         console.log(`Vendor joined room ${roomName}`);
       });
@@ -36,9 +36,8 @@ async function startServer() {
     server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
-    
   } catch (error) {
-    console.error('Failed to start the server:', error);
+    console.error("Failed to start the server:", error);
   }
 }
 

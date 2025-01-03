@@ -23,14 +23,14 @@ const Modal: React.FC<ModalProps> = ({ children, scrollRef, onClose }) => {
       onClick={handleCloseModal}
     >
       <div
-        className="bg-white relative shadow-2xl rounded-xl px-5 py-6 mx-auto max-w-3xl"
+        className="bg-background relative shadow-2xl rounded-xl px-5 py-6 mx-auto max-w-3xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           className="absolute top-4 right-4 p-2 z-20"
           onClick={closeModal}
         >
-          <FaPlus className="rotate-45 text-black w-8 h-8 text-sky-600" />
+          <FaPlus className="rotate-45 text-secondary w-8 h-8" />
         </button>
 
         {children}
