@@ -1,25 +1,12 @@
-import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
-import { EventType } from "../../types/Event";
-import { getEventsByVendor } from "../../util/fetch/getEventsByVendor";
-import EventCard from "./EventCard";
+import { EventType } from "../../../types/Event";
+import EventCard from "../EventCard";
+import { useVendorEvents } from "../hooks/useVendorEvents";
 
 const Vendor = () => {
-  const [events, setEvents] = useState<EventType[]>([]);
-  const { address } = useAccount();
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      if (!address) return;
-      const data = await getEventsByVendor(address);
-      setEvents(data);
-    };
-    fetchEvents();
-  }, []);
+  const { events } = useVendorEvents();
 
   return (
     <div className="p-8 text-xl flex flex-col gap-12">
-      <h1 className="text-3xl font-medium px-4">Your Events</h1>
       <div className="flex flex-wrap gap-8">
         {events.length ? (
           events
@@ -34,7 +21,7 @@ const Vendor = () => {
       {events.length &&
       events.filter((event) => new Date(event.date) < new Date()).length ? (
         <>
-          <h1 className="text-3xl font-medium px-4">Past Events</h1>
+          <h1 className="text-3xl font-bold px-4">Past Events</h1>
           <div className="flex flex-wrap gap-8">
             {events
               .filter((event) => new Date(event.date) < new Date())

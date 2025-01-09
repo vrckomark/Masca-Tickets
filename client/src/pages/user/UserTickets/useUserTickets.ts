@@ -1,15 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { CircularProgress } from "@mui/material";
-import TicketCard from "../components/TicketCard";
-import { verifyTicket } from "../util/fetch/verifyTicket";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { selectUser, setTickets } from "../store/userSlice";
-import { TicketReturnType, TicketType } from "../types/Ticket";
-import { MascaContext } from "../components/providers/MascaApiProvider";
-import { getEvent } from "../util/fetch/getEvent";
+import { MascaContext } from "../../../components/providers/MascaApiProvider";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { selectUser, setTickets } from "../../../store/userSlice";
+import { TicketReturnType, TicketType } from "../../../types/Ticket";
+import { verifyTicket } from "../../../util/fetch/verifyTicket";
+import { getEvent } from "../../../util/fetch/getEvent";
 
-const UserTickets = () => {
+export const useUserTickets = () => {
   const { currentDID, tickets } = useAppSelector(selectUser);
   const { mascaApi } = useContext(MascaContext);
   const { address } = useAccount();
@@ -61,8 +59,13 @@ const UserTickets = () => {
     return copyTickets;
   };
 
-const fetchVCs = async (forceRefresh = false) => {
-    if (!mascaApi || !currentDID || !address || (!forceRefresh && tickets.length > 0)) {
+  const fetchVCs = async (forceRefresh = false) => {
+    if (
+      !mascaApi ||
+      !currentDID ||
+      !address ||
+      (!forceRefresh && tickets.length > 0)
+    ) {
       console.log("No mascaApi, currentDID, address, or tickets");
       console.log("mascaApi:", mascaApi);
       console.log("currentDID:", currentDID);
@@ -103,50 +106,10 @@ const fetchVCs = async (forceRefresh = false) => {
     fetchVCs(true);
   };
 
-  return (
-    <div className="p-8 text-xl">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">My Tickets</h2>
-        <button
-          className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600"
-          onClick={handleRefresh}
-          disabled={isLoading || verifying}
-        >
-          {isLoading || verifying ? <CircularProgress size={20} color="inherit" /> : "Refresh"}
-        </button>
-      </div>
-
-      {isLoading || (verifying && !tickets.length) ? (
-        <CircularProgress size={20} color="inherit" />
-      ) : !tickets.length ? (
-        <p>No valid credentials found.</p>
-      ) : (
-        <>
-          <h2 className="mb-4 text-2xl font-semibold">Unused Tickets</h2>
-          <div className="text-wrap gap-6 flex flex-wrap">
-            {tickets
-              .filter((ticket) => !ticket.isUsed)
-              .map((ticket, index) => (
-                <TicketCard key={index} ticket={ticket} />
-              ))}
-          </div>
-
-          {tickets.some((ticket) => ticket.isUsed) && (
-            <>
-              <h2 className="mb-4 text-2xl font-semibold mt-8">Used Tickets</h2>
-              <div className="text-wrap gap-6 flex flex-wrap">
-                {tickets
-                  .filter((ticket) => ticket.isUsed)
-                  .map((ticket, index) => (
-                    <TicketCard key={index} ticket={ticket} />
-                  ))}
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </div>
-  );
+  return {
+    handleRefresh,
+    isLoading,
+    isVerifying: verifying,
+    tickets,
+  };
 };
-
-export default UserTickets;

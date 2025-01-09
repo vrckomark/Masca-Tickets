@@ -1,24 +1,12 @@
-import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import { useSearchbar } from "../hooks/useSearchbar";
 
 interface SearchbarProps {
   onDebouncedChange?: (search: string) => void;
 }
 
 const Searchbar: React.FC<SearchbarProps> = ({ onDebouncedChange }) => {
-  const [input, setInput] = useState<string>("");
-
-  const onInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setInput(e.currentTarget.value);
-  };
-
-  useEffect(() => {
-    if (!onDebouncedChange) return;
-    const timeout = setTimeout(() => {
-      onDebouncedChange(input);
-    }, 300);
-    return () => clearTimeout(timeout);
-  }, [input]);
+  const { input, onInputChange } = useSearchbar(onDebouncedChange);
 
   return (
     <div className="flex items-center p-6 rounded-xl text-2xl bg-white gap-6 bg-opacity-5 hover:bg-opacity-10 transition-all w-1/2">

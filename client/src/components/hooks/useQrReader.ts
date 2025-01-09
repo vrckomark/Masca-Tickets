@@ -1,30 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import QrScanner from "qr-scanner";
-import { CircularProgress } from "@mui/material";
 import { UseTicket } from "../../util/fetch/useTicket";
-import "./QrStyles.css";
-import QrFrame from "../../assets/qr-frame.svg";
-import SuccessAnimation from '../ui/successAnimation';
-import FailureAnimation from '../ui/FailureAnimation';
-
-interface eventProps {
-  eventID: string;
-  ticketID: string;
-  closeModal: () => void;
-}
 
 interface ScannedResult {
   eventID: string;
   room: string;
 }
 
-const QrReader: React.FC<eventProps> = ({ eventID, ticketID, closeModal }) => {
+export const useQrReader = (
+  eventID: string,
+  ticketID: string,
+  closeModal: () => void
+) => {
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
   const qrBoxEl = useRef<HTMLDivElement>(null);
   const [qrOn, setQrOn] = useState<boolean>(true);
 
-  const [scannedResult, setScannedResult] = useState<ScannedResult | null>(null);
+  const [scannedResult, setScannedResult] = useState<ScannedResult | null>(
+    null
+  );
   const [apiResult, setApiResult] = useState<boolean | null>(null);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [scanComplete, setScanComplete] = useState<boolean>(false);
@@ -44,8 +39,8 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID, closeModal }) => {
 
     setScanComplete(true);
     setScannedResult(scanedDataParse);
-    console.log('Scanned Result:', scanedDataParse);
-    console.log('Scanned Result:', scannedResult);
+    console.log("Scanned Result:", scanedDataParse);
+    console.log("Scanned Result:", scannedResult);
     setIsVerifying(true);
     setApiResult(null);
 
@@ -53,7 +48,9 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID, closeModal }) => {
 
     try {
       if (scanedDataParse?.eventID !== eventID) {
-        throw new Error(`Invalid ticket for this event. Event ID: ${scanedDataParse?.eventID} and Ticket ID: ${eventID}`);
+        throw new Error(
+          `Invalid ticket for this event. Event ID: ${scanedDataParse?.eventID} and Ticket ID: ${eventID}`
+        );
       }
 
       const apiResponse = await UseTicket(ticketID, scanedDataParse?.room);
@@ -76,6 +73,7 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID, closeModal }) => {
   };
 
   const onScanFail = (err: string | Error) => {
+    console.log(err);
     return;
   };
 
@@ -117,45 +115,12 @@ const QrReader: React.FC<eventProps> = ({ eventID, ticketID, closeModal }) => {
     scanner?.current?.start();
   };
 
-  return (
-    <div className="qr-reader">
-      <video ref={videoEl}></video>
-      <div ref={qrBoxEl} className="qr-box">
-        <img
-          src={QrFrame}
-          alt="Qr Frame"
-          width={256}
-          height={256}
-          className="qr-frame"
-        />
-      </div>
-
-      {scannedResult && (
-        <div
-          className={`popup ${
-            apiResult === true
-              ? "popup-success"
-              : apiResult === false
-              ? "popup-error"
-              : ""
-          }`}
-        >
-          <div className="flex justify-center items-center gap-2">
-            {isVerifying ? (
-              <CircularProgress size={50} thickness={10} color="inherit" />
-            ) : apiResult === false ? (
-              <FailureAnimation />
-            ) : apiResult === true ? (
-              <SuccessAnimation />
-            ) : (
-              <span className="text-lg">Awaiting scan...</span>
-            )}
-          </div>
-          {!isVerifying && ( <button onClick={handleConfirm}>Confirm</button> )}
-        </div>
-      )}
-    </div>
-  );
+  return {
+    videoEl,
+    qrBoxEl,
+    scannedResult,
+    apiResult,
+    isVerifying,
+    handleConfirm,
+  };
 };
-
-export default QrReader;

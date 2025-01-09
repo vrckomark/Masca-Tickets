@@ -1,20 +1,23 @@
+import { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
-import Vendor from "./pages/Vendor";
+import Vendor from "./pages/vendor/Events";
 import Navbar from "./components/Navbar";
-import SignUp from "./pages/SignUp";
-import CreateEvent from "./pages/CreateEvent";
-import UserTickets from "./pages/UserTickets";
+import SignUp from "./pages/signup";
+import CreateEvent from "./pages/vendor/CreateEvent";
 import { useInitializeWallet } from "./hooks/useInitializeWallet";
-import MascaStatus from "./components/ui/MascaStatus";
-import Home from "./pages/Home";
+import Home from "./pages/home";
+import { ModalContext } from "./contexts/ModalContextProvider";
+import UserTickets from "./pages/user/UserTickets";
 
 const App = () => {
+  const { Modal } = useContext(ModalContext);
   useInitializeWallet();
 
   return (
     <div className="flex flex-col">
       <Navbar />
-      <MascaStatus />
+      {Modal}
+      {/* <MascaStatus /> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/tickets" element={<UserTickets />} />
